@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanciones y Disciplina | U.E. Luz del Mundo A</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <header></header>
+    <main class="contenedor">
+      <section class="hero">
+        <span class="hero-tag">Tribunal de Disciplina</span>
+        <h1>Control de Sanciones y Tarjetas</h1>
+        <p>Registro de tarjetas amarillas y rojas aplicadas en cancha, estado de pago de multas y habilitación de jugadores.</p>
+      </section>
+
+      <div class="panel">
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                <th>Equipo</th>
+                <th>Tarjeta</th>
+                <th>Partido</th>
+                <th>Multa</th>
+                <th>¿Pagó?</th>
+                <th>Estado</th>
+                <th id="th-admin-sanciones" hidden>Acciones de Mesa</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-sanciones"><tr><td colspan="8" class="empty">Cargando sanciones...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+
+    <script type="module">
+      import { iniciarSanciones } from './js/app.js';
+      iniciarSanciones();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planillero Futsal | U.E. Luz del Mundo A</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <header></header>
+    <main class="contenedor">
+      <section class="hero">
+        <span class="hero-tag">Campeonato Oficial de Futsal</span>
+        <h1>Partidos, Posiciones y Goleadores</h1>
+        <p>Registro general de los partidos jugados y seguimiento en tiempo real del campeonato.</p>
+      </section>
+
+      <div id="aviso-index" class="aviso" hidden></div>
+
+      <div class="grid-3">
+        <div class="stat-card"><span class="stat-num" id="tot-partidos">0</span><span class="stat-lbl">Partidos Registrados</span></div>
+        <div class="stat-card"><span class="stat-num" id="tot-goles">0</span><span class="stat-lbl">Goles Anotados</span></div>
+        <div class="stat-card"><span class="stat-num" id="tot-equipos">0</span><span class="stat-lbl">Equipos Participantes</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="filtro-cat">Filtrar por Categoría</label>
+            <select id="filtro-cat"><option value="">Todas las categorías</option></select>
+          </div>
+          <div class="form-group">
+            <label for="filtro-gen">Filtrar por Rama</label>
+            <select id="filtro-gen">
+              <option value="">Todas</option>
+              <option value="varones">Varones</option>
+              <option value="mujeres">Mujeres</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <section class="panel">
+        <h2>Registro General de Partidos</h2>
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha y Hora</th>
+                <th>Fase</th>
+                <th>Partido y Resultado</th>
+                <th>Categoría / Rama</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-partidos"><tr><td colspan="5" class="empty">Cargando partidos...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Tabla de Posiciones</h2>
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>Categoría</th>
+                <th>PJ</th>
+                <th>PG-PE-PP</th>
+                <th>GF:GC</th>
+                <th>DG</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-posiciones"><tr><td colspan="8" class="empty">Cargando clasificación...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Tabla de Goleadores</h2>
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Equipo</th>
+                <th>Categoría</th>
+                <th>Goles</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-goleadores"><tr><td colspan="5" class="empty">Cargando goleadores...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <footer></footer>
+
+    <script type="module">
+      import { iniciarIndex } from './js/app.js';
+      iniciarIndex();
+    </script>
+  </body>
+</html>
