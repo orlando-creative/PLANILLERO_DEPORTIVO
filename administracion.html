@@ -13,9 +13,8 @@
   <main class="contenedor">
     <section class="hero">
       <span class="hero-tag">Mesa de Control Oficial</span>
-      <h1>Planilla, Control y Rendicion de Cuentas</h1>
-      <p>Control de partidos en vivo, cronómetro de 1° y 2° tiempo, autores de goles, tarjetas, arbitrajes y finanzas
-        del campeonato.</p>
+      <h1>Planilla y Control Deportivo</h1>
+      <p>Control de partidos en vivo, cronómetro de 1° y 2° tiempo, autores de goles, tarjetas y disciplina del campeonato.</p>
     </section>
 
     <div id="aviso-admin" class="aviso" hidden></div>
@@ -25,7 +24,6 @@
       <button type="button" class="tab-btn activo" data-tab="sec-planilla">Planilla en Vivo</button>
       <button type="button" class="tab-btn" data-tab="sec-registro">Registro de Partidos</button>
       <button type="button" class="tab-btn" data-tab="sec-equipos">Equipos y Jugadores</button>
-      <button type="button" class="tab-btn" data-tab="sec-finanzas">Rendicion de Cuentas</button>
     </nav>
 
     <!-- ================================================================== -->
@@ -49,6 +47,14 @@
               <label for="partido-fecha">Fecha y Hora</label>
               <input id="partido-fecha" type="datetime-local" required />
             </div>
+            <div class="form-group">
+              <label for="partido-categoria">Categoría</label>
+              <select id="partido-categoria" required>
+                <option value="">Seleccionar categoría</option>
+                <option value="1ro a 3ro">1ro a 3ro</option>
+                <option value="4to a 6to">4to a 6to</option>
+              </select>
+            </div>
           </div>
 
           <!-- Equipo Local + Plantel -->
@@ -56,7 +62,7 @@
             <div>
               <div class="form-group">
                 <label for="s-partido-local">Equipo Local</label>
-                <select id="s-partido-local" required></select>
+                <select id="s-partido-local" required disabled></select>
               </div>
               <div class="form-group">
                 <label for="s-cap-local">Capitán Local</label>
@@ -72,7 +78,7 @@
             <div>
               <div class="form-group">
                 <label for="s-partido-visita">Equipo Visitante</label>
-                <select id="s-partido-visita" required></select>
+                <select id="s-partido-visita" required disabled></select>
               </div>
               <div class="form-group">
                 <label for="s-cap-visita">Capitán Visitante</label>
@@ -83,11 +89,6 @@
               <!-- Lista de jugadores del equipo visitante (con suspensiones) -->
               <div id="plantel-visita" class="plantel-contenedor"></div>
             </div>
-          </div>
-
-          <div class="form-group" style="max-width:300px">
-            <label for="partido-arbitraje">Costo de Arbitraje para este Partido (Bs.)</label>
-            <input id="partido-arbitraje" type="number" step="1" min="0" value="30" required />
           </div>
 
           <button class="btn" type="submit" style="margin-top:10px">Guardar y Abrir en Planilla</button>
@@ -156,6 +157,20 @@
           </div>
         </div>
 
+        <div class="panel panel-pagos-arbitraje">
+          <h3>Pago de arbitraje</h3>
+          <div class="grid-2">
+            <label class="pago-equipo">
+              <span id="pago-arbitraje-nombre-local">Equipo local</span>
+              <span><input type="checkbox" id="chk-arbitraje-local"> Pagó el arbitraje</span>
+            </label>
+            <label class="pago-equipo">
+              <span id="pago-arbitraje-nombre-visita">Equipo visitante</span>
+              <span><input type="checkbox" id="chk-arbitraje-visita"> Pagó el arbitraje</span>
+            </label>
+          </div>
+        </div>
+
         <!-- Definición por Tanda de Penales (5 tiros por equipo en caso de empate) -->
         <div id="panel-penales" class="panel panel-penales" hidden>
           <div class="penales-header">
@@ -203,18 +218,6 @@
               <button type="button" class="btn btn-sm btn-out" id="btn-penal-deshacer">Deshacer Último Tiro</button>
               <button type="button" class="btn btn-sm btn-out" id="btn-penal-reiniciar">Reiniciar Tanda</button>
             </div>
-          </div>
-        </div>
-
-        <!-- Control de Arbitraje del Partido en Cancha -->
-        <div class="panel-arbitraje">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
-            <div>
-              <strong>Arbitraje del Partido:</strong> Bs. <span id="txt-costo-arbitraje-partido">0.00</span>
-            </div>
-            <label style="display:inline-flex; align-items:center; gap:6px; font-weight:700; cursor:pointer">
-              <input type="checkbox" id="chk-arbitraje-pagado"> Arbitraje Pagado al Árbitro
-            </label>
           </div>
         </div>
 
@@ -314,168 +317,42 @@
     <!-- 3. EQUIPOS Y JUGADORES                                             -->
     <!-- ================================================================== -->
     <section id="sec-equipos" class="tab-sec" hidden>
-      <div class="grid-2">
-        <div class="panel">
-          <h2>Registrar Equipo</h2>
-          <form id="form-equipo">
+      <div class="panel">
+        <h2>Registrar Equipo</h2>
+        <form id="form-equipo">
+          <div class="grid-2">
             <div class="form-group">
               <label for="equipo-nombre">Nombre del Equipo / Curso</label>
               <input id="equipo-nombre" placeholder="Ej. 3ro Secundaria A" required />
             </div>
             <div class="form-group">
-              <label for="equipo-categoria">Categoria</label>
-              <input id="equipo-categoria" placeholder="Ej. Secundaria" required />
+              <label for="equipo-categoria">Categoría</label>
+              <select id="equipo-categoria" required>
+                <option value="1ro a 3ro">1ro a 3ro</option>
+                <option value="4to a 6to">4to a 6to</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="equipo-genero">Rama</label>
               <select id="equipo-genero">
                 <option value="varones">Varones</option>
                 <option value="mujeres">Mujeres</option>
-                <option value="Niños">Niños</option>
-                <option value="miñas">Niñas</option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="equipo-inscripcion">Monto de Inscripcion (Bs.)</label>
-              <input id="equipo-inscripcion" type="number" step="1" min="0" value="50" required />
-            </div>
-            <div class="form-group">
-              <label style="display:inline-flex; align-items:center; gap:6px; font-weight:700">
-                <input type="checkbox" id="equipo-inscripcion-pagada"> Inscripcion Cancelada / Pagada
-              </label>
-            </div>
-            <button class="btn" type="submit">Guardar Equipo</button>
-          </form>
-        </div>
-
-        <div class="panel">
-          <h2>Registrar Jugador</h2>
-          <form id="form-jugador">
-            <div class="form-group">
-              <label for="s-equipo-jugador">Equipo</label>
-              <select id="s-equipo-jugador" required></select>
-            </div>
-            <div class="form-group">
-              <label for="jugador-nombre">Nombre y Apellido</label>
-              <input id="jugador-nombre" required />
-            </div>
-            <div class="form-group">
-              <label for="jugador-dorsal">Numero de Camiseta (Dorsal)</label>
-              <input id="jugador-dorsal" type="number" min="1" max="99" placeholder="Ej. 10" />
-            </div>
-            <button class="btn" type="submit">Guardar Jugador</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================================== -->
-    <!-- 4. RENDICION DE CUENTAS Y CONTROL FINANCIERO                       -->
-    <!-- ================================================================== -->
-    <section id="sec-finanzas" class="tab-sec" hidden>
-      <!-- Resumen de Balance -->
-      <div class="grid-3" style="margin-bottom:16px">
-        <div class="stat-card">
-          <span class="stat-num" id="kpi-ingresos-inscripciones">Bs. 0.00</span>
-          <span class="stat-lbl">Inscripciones Cobradas</span>
-          <small id="kpi-inscripciones-pendientes" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num" id="kpi-ingresos-multas">Bs. 0.00</span>
-          <span class="stat-lbl">Multas Cobradas</span>
-          <small id="kpi-multas-pendientes" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num" id="kpi-egresos-arbitraje">Bs. 0.00</span>
-          <span class="stat-lbl">Arbitrajes Pagados</span>
-          <small id="kpi-arbitraje-pendiente" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
-        </div>
-      </div>
-
-      <div class="panel"
-        style="background:#eef6f1; border-color:#9dc7ad; text-align:center; padding:16px; margin-bottom:20px">
-        <span style="text-transform:uppercase; font-size:.8rem; font-weight:800; color:var(--color-texto-secundario)">Saldo Neto /
-          Balance Disponible en Caja</span>
-        <div id="kpi-balance-general" style="font-size:2.4rem; font-weight:900; margin:4px 0">Bs. 0.00</div>
-        <small style="color:var(--color-texto-secundario)">Calculo: (Inscripciones Cobradas + Multas Cobradas) - Arbitrajes
-          Pagados</small>
-      </div>
-
-      <!-- Tarifas Base del Campeonato -->
-      <div class="panel">
-        <h2>Tarifas Base del Campeonato</h2>
-        <p class="muted" style="margin-bottom:12px">Define los valores por defecto que se aplican al registrar partidos,
-          sanciones y equipos.</p>
-        <form id="form-tarifas-base" class="grid-2">
-          <div class="form-group">
-            <label for="cfg-tarifa-amarilla">Multa por Tarjeta Amarilla (Bs.)</label>
-            <input type="number" id="cfg-tarifa-amarilla" min="0" step="1" required />
+            <label class="pago-equipo">
+              <span>Inscripción</span>
+              <span><input type="checkbox" id="equipo-inscripcion-pagada"> Pagó la inscripción</span>
+            </label>
           </div>
-          <div class="form-group">
-            <label for="cfg-tarifa-roja">Multa por Tarjeta Roja (Bs.)</label>
-            <input type="number" id="cfg-tarifa-roja" min="0" step="1" required />
-          </div>
-          <div class="form-group">
-            <label for="cfg-tarifa-inscripcion">Monto de Inscripcion Base por Equipo (Bs.)</label>
-            <input type="number" id="cfg-tarifa-inscripcion" min="0" step="1" required />
-          </div>
-          <div class="form-group">
-            <label for="cfg-tarifa-arbitraje">Costo Base de Arbitraje por Partido (Bs.)</label>
-            <input type="number" id="cfg-tarifa-arbitraje" min="0" step="1" required />
-          </div>
-          <div style="grid-column: 1 / -1">
-            <button class="btn" type="submit">Guardar Tarifas Base</button>
-          </div>
+          <button class="btn" type="submit">Guardar Equipo</button>
         </form>
       </div>
-
-      <!-- Rendición por Partido -->
       <div class="panel">
-        <h2>Rendicion de Arbitrajes y Multas por Partido</h2>
-        <div class="tabla-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Partido</th>
-                <th>Costo Arbitraje</th>
-                <th>Estado Arbitraje</th>
-                <th>Multas Cobradas / Totales</th>
-                <th>Estado Partido</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-finanzas-partidos">
-              <tr>
-                <td colspan="6" class="empty">Cargando rendición de partidos...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Control de Inscripciones por Equipo -->
-      <div class="panel">
-        <h2>Control de Cobro de Inscripciones de Equipos</h2>
-        <div class="tabla-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Equipo</th>
-                <th>Categoria</th>
-                <th>Monto Inscripcion</th>
-                <th>Estado de Pago</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-finanzas-equipos">
-              <tr>
-                <td colspan="5" class="empty">Cargando inscripciones...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <h2>Equipos Registrados</h2>
+        <div id="equipos-registrados" class="equipos-admin-grid"><p class="empty">Cargando equipos...</p></div>
       </div>
     </section>
+
   </main>
   <footer></footer>
 

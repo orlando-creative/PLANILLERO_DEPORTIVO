@@ -1,6 +1,6 @@
 # Planillero Oficial de Futsal
 
-Aplicación web para administrar el campeonato de futsal de la U.E. Luz del Mundo A. Permite consultar partidos y estadísticas, registrar equipos y jugadores, llevar la planilla durante los encuentros, gestionar sanciones y controlar los ingresos y egresos del torneo.
+Aplicación web para administrar el campeonato de futsal de la U.E. Luz del Mundo A. Permite consultar partidos y estadísticas, registrar equipos y jugadores, llevar la planilla durante los encuentros y gestionar sanciones y disciplina del torneo.
 
 ## Contenido
 
@@ -19,9 +19,9 @@ Aplicación web para administrar el campeonato de futsal de la U.E. Luz del Mund
 El sitio ofrece dos tipos de experiencia:
 
 - **Público:** consultar el calendario y resultados, filtrar por categoría y rama, ver la clasificación y revisar la tabla de goleadores. La página de sanciones también es visible públicamente.
-- **Administración:** iniciar sesión y gestionar equipos, jugadores, capitanes, partidos, cronómetro, incidencias, penales, sanciones y finanzas.
+- **Administración:** iniciar sesión y gestionar equipos, jugadores, capitanes, partidos, cronómetro, incidencias, penales y sanciones.
 
-El sistema está pensado para un campeonato escolar, pero su modelo de equipos, jugadores, partidos y tarifas permite adaptarlo a otros torneos.
+El sistema está pensado para un campeonato escolar, pero su modelo de equipos, jugadores y partidos permite adaptarlo a otros torneos.
 
 ## Tecnologías y arquitectura
 
@@ -39,13 +39,13 @@ El navegador importa módulos ES desde archivos locales y accede a Supabase con 
 |---|---|
 | [index.html](./index.html) | Inicio público: partidos, clasificación y goleadores. |
 | [inicio-sesion.html](./inicio-sesion.html) | Formulario de acceso de administración. |
-| [administracion.html](./administracion.html) | Programación y planilla, registro de partidos, equipos, jugadores y finanzas. |
+| [administracion.html](./administracion.html) | Programación y planilla, registro de partidos, equipos y jugadores. |
 | [sanciones.html](./sanciones.html) | Consulta y gestión de sanciones. |
 | [reglamento.html](./reglamento.html) | Reglas resumidas para el torneo. |
 | [css/estilos.css](./css/estilos.css) | Estilos compartidos y diseño adaptable. |
 | [js/supabase.js](./js/supabase.js) | Cliente REST, sesión, autenticación y operaciones de datos. |
 | [js/app.js](./js/app.js) | Utilidades compartidas, navegación y páginas públicas. |
-| [js/app-modulos.js](./js/app-modulos.js) | Módulos de finanzas, gestión, penales y presentación del reloj. |
+| [js/app-modulos.js](./js/app-modulos.js) | Módulos de gestión, penales y presentación del reloj. |
 | [js/app-admin.js](./js/app-admin.js) | Coordinación de la planilla, el reloj y las incidencias en vivo. |
 | [sql/esquema_futsal.sql](./sql/esquema_futsal.sql) | Tablas, vistas, triggers, funciones y políticas RLS. |
 | [vercel.json](./vercel.json) | Configuración para servir el sitio estático en Vercel. |
@@ -60,14 +60,14 @@ El navegador importa módulos ES desde archivos locales y accede a Supabase con 
 
 ## Flujo de uso
 
-1. Un administrador crea o registra equipos y sus plantillas.
-2. Programa un partido, define categoría, fecha, equipos, capitanes y costo de arbitraje.
+1. Un administrador crea equipos, añade varios integrantes y marca si se pagó la inscripción.
+2. Programa un partido con fecha, categoría, equipos y capitanes. Las categorías disponibles son `1ro a 3ro` y `4to a 6to`; los equipos se filtran por la categoría seleccionada.
 3. Abre la planilla y usa el reloj para controlar los periodos.
 4. Registra goles y tarjetas; el marcador se basa en los eventos de gol.
 5. Si el encuentro sigue empatado, puede jugarse tiempo extra y luego la tanda de penales.
-6. Las tarjetas generan sanciones y multas en la base de datos.
-7. La página pública presenta resultados finalizados, tabla de posiciones y goleadores.
-8. El módulo financiero calcula pagos recibidos, pendientes y gastos de arbitraje.
+6. Las tarjetas generan sanciones disciplinarias en la base de datos.
+7. En la planilla se registra por separado el pago de arbitraje de cada equipo; el estado queda visible en el registro del partido.
+8. La página pública presenta resultados finalizados, tabla de posiciones y goleadores.
 
 ## Modelo de datos
 
@@ -76,12 +76,11 @@ El esquema completo y las relaciones están definidos en [sql/esquema_futsal.sql
 | Tabla o vista | Propósito |
 |---|---|
 | `perfiles` | Vincula al usuario de Supabase Auth con su nombre y rol (`administrador` o `espectador`). |
-| `configuracion_finanzas` | Guarda los valores base de multas, inscripción y arbitraje. |
-| `equipos` | Almacena nombre, categoría, rama, inscripción y estado del equipo. |
+| `equipos` | Almacena nombre, categoría, rama y estado de pago de inscripción. |
 | `jugadores` | Guarda las plantillas y dorsales, vinculados a un equipo. |
-| `partidos` | Registra la programación, marcador, estado, reloj, arbitraje y tanda de penales. |
+| `partidos` | Registra la programación, marcador, estado, reloj, tanda de penales y pagos de arbitraje por equipo. |
 | `eventos_partido` | Guarda cada gol y tarjeta, con equipo, jugador, periodo y segundo del partido. |
-| `sanciones` | Contiene multas y estado disciplinario asociados a eventos de tarjeta. |
+| `sanciones` | Contiene el estado disciplinario asociado a eventos de tarjeta. |
 | `posiciones` (vista) | Calcula partidos jugados, ganados, empatados, perdidos, goles y puntos a partir de partidos finalizados. |
 | `goleadores` (vista) | Cuenta los goles de jugadores en partidos finalizados. |
 
@@ -113,17 +112,7 @@ El esquema completo y las relaciones están definidos en [sql/esquema_futsal.sql
 
 ### Sanciones
 
-Una tarjeta amarilla o roja asociada a un jugador origina una sanción mediante un trigger. El administrador puede actualizar el monto, registrar el pago y cambiar el estado disciplinario. Las sanciones en estado `suspendida` se reflejan en la selección de capitanes y jugadores de la planilla.
-
-### Finanzas
-
-El panel suma inscripciones y multas cobradas, muestra montos pendientes y resta el arbitraje pagado para presentar el saldo disponible:
-
-```text
-Saldo = inscripciones cobradas + multas cobradas - arbitrajes pagados
-```
-
-Las tarifas base se guardan en `configuracion_finanzas`; el sistema también permite ajustar montos particulares por equipo, sanción o partido.
+Una tarjeta amarilla o roja asociada a un jugador origina una sanción mediante un trigger. El administrador puede marcar si fue pagada o no y cambiar el estado disciplinario. Las sanciones en estado `suspendida` se reflejan en la selección de capitanes y jugadores de la planilla.
 
 ### Reinicio del campeonato
 

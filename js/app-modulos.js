@@ -1,4 +1,4 @@
-import { guardar, actualizar, borrar, guardarFinanzas } from './supabase.js';
+import { guardar, actualizar, borrar } from './supabase.js';
 import { esc, fmtFecha, fmtReloj, avisar } from './app.js';
 
 // Representa el tiempo del partido y habilita los controles válidos para su estado.
@@ -27,121 +27,6 @@ export function renderizarReloj(partido, segundos, penales) {
   document.getElementById('btn-reloj-extra').disabled = fin || !puedeIrATiempoExtra;
   document.getElementById('btn-toggle-penales').disabled = fin || partido.estado !== 'penales';
   document.getElementById('btn-reloj-fin').disabled = fin || !tiempoReglamentarioTerminado || penalSinResolver;
-}
-
-// Finanzas, partidos y plantillas del panel.
-// Crea el resumen financiero y los controles de cobros y costos del torneo.
-export function crearModuloFinanzas({ datos, cargar, actualizarFinanzas }) {
-  // Calcula totales y renderiza tarifas, pagos, arbitrajes y balance.
-  const render = () => {
-    const { equipos, partidos, sanciones, finanzasCfg } = datos();
-    // Suma un campo numérico solo para las filas que cumplen la condición.
-    const total = (rows, predicate, key) => rows.filter(predicate)
-      .reduce((sum, row) => sum + Number(row[key] || 0), 0);
-    const inscripciones = total(equipos, (row) => row.inscripcion_pagada, 'monto_inscripcion');
-    const pendientesInsc = total(equipos, (row) => !row.inscripcion_pagada, 'monto_inscripcion');
-    const multas = total(sanciones, (row) => row.pagada, 'monto');
-    const pendientesMultas = total(sanciones, (row) => !row.pagada, 'monto');
-    const arbitraje = total(partidos, (row) => row.arbitraje_pagado, 'costo_arbitraje');
-    const pendientesArb = total(partidos, (row) => !row.arbitraje_pagado, 'costo_arbitraje');
-    const kpis = {
-      'kpi-ingresos-inscripciones': `Bs. ${inscripciones.toFixed(2)}`,
-      'kpi-inscripciones-pendientes': `(Pendiente: Bs. ${pendientesInsc.toFixed(2)})`,
-      'kpi-ingresos-multas': `Bs. ${multas.toFixed(2)}`,
-      'kpi-multas-pendientes': `(Pendiente: Bs. ${pendientesMultas.toFixed(2)})`,
-      'kpi-egresos-arbitraje': `Bs. ${arbitraje.toFixed(2)}`,
-      'kpi-arbitraje-pendiente': `(Por pagar: Bs. ${pendientesArb.toFixed(2)})`
-    };
-    Object.entries(kpis).forEach(([id, value]) => {
-      document.getElementById(id).textContent = value;
-    });
-    const balance = document.getElementById('kpi-balance-general');
-    const neto = inscripciones + multas - arbitraje;
-    balance.textContent = `Bs. ${neto.toFixed(2)}`;
-    balance.style.color = neto >= 0 ? 'var(--color-verde)' : 'var(--color-rojo)';
-
-    Object.entries({
-      'cfg-tarifa-amarilla': finanzasCfg.multa_amarilla ?? 10,
-      'cfg-tarifa-roja': finanzasCfg.multa_roja ?? 20,
-      'cfg-tarifa-inscripcion': finanzasCfg.monto_inscripcion ?? 50,
-      'cfg-tarifa-arbitraje': finanzasCfg.costo_arbitraje ?? 30
-    }).forEach(([id, value]) => {
-      const input = document.getElementById(id);
-      if (input) input.value = value;
-    });
-
-    const tablaEquipos = document.getElementById('tbody-finanzas-equipos');
-    if (tablaEquipos) {
-      tablaEquipos.innerHTML = equipos.length ? equipos.map((team) => `
-        <tr><td><strong>${esc(team.nombre)}</strong></td><td>${esc(team.categoria)} (${esc(team.genero)})</td>
-        <td>Bs. <input type="number" step="1" min="0" value="${Number(team.monto_inscripcion || 0)}" data-monto-eq="${team.id}" style="width:70px;padding:3px"></td>
-        <td><strong>${team.inscripcion_pagada ? 'Pagada' : 'Pendiente'}</strong></td><td>
-        <button class="btn btn-sm ${team.inscripcion_pagada ? 'btn-out' : ''}" data-pago-eq="${team.id}" data-val="${!team.inscripcion_pagada}">${team.inscripcion_pagada ? 'Marcar Pendiente' : 'Marcar Pagada'}</button>
-        <button class="btn btn-sm btn-out" data-guardar-monto-eq="${team.id}">Guardar Monto</button></td></tr>
-      `).join('') : '<tr><td colspan="5" class="empty">No hay equipos registrados.</td></tr>';
-      // Actualiza si la inscripción del equipo está cancelada y recarga el resumen.
-      tablaEquipos.querySelectorAll('[data-pago-eq]').forEach((button) => button.addEventListener('click', async () => {
-        await actualizar('equipos', button.dataset.pagoEq, { inscripcion_pagada: button.dataset.val === 'true' });
-        await cargar();
-      }));
-      // Guarda el monto de inscripción específico del equipo.
-      tablaEquipos.querySelectorAll('[data-guardar-monto-eq]').forEach((button) => button.addEventListener('click', async () => {
-        const input = tablaEquipos.querySelector(`[data-monto-eq="${button.dataset.guardarMontoEq}"]`);
-        await actualizar('equipos', button.dataset.guardarMontoEq, { monto_inscripcion: Number(input.value || 0) });
-        await cargar();
-        avisar('aviso-admin', 'Monto de inscripción actualizado.');
-      }));
-    }
-
-    const tablaPartidos = document.getElementById('tbody-finanzas-partidos');
-    if (!tablaPartidos) return;
-    const names = Object.fromEntries(equipos.map((team) => [team.id, team.nombre]));
-    tablaPartidos.innerHTML = partidos.length ? partidos.map((match) => {
-      const multasPartido = sanciones.filter((row) => row.partido_id === match.id);
-      const totalMultas = multasPartido.reduce((sum, row) => sum + Number(row.monto || 0), 0);
-      const cobradas = multasPartido.filter((row) => row.pagada)
-        .reduce((sum, row) => sum + Number(row.monto || 0), 0);
-      return `<tr><td>${fmtFecha(match.fecha_hora)}</td>
-        <td><strong>${esc(names[match.equipo_local_id])} vs ${esc(names[match.equipo_visitante_id])}</strong></td>
-        <td>Bs. <input type="number" step="1" min="0" value="${Number(match.costo_arbitraje || 0)}" data-arb-partido="${match.id}" style="width:65px;padding:3px">
-        <button class="btn btn-sm btn-out" data-guardar-arb="${match.id}">Fijar</button></td>
-        <td><button class="btn btn-sm ${match.arbitraje_pagado ? '' : 'btn-red'}" data-toggle-arb="${match.id}" data-val="${!match.arbitraje_pagado}">${match.arbitraje_pagado ? 'Pagado a Arbitro' : 'Pendiente Pago'}</button></td>
-        <td>Bs. ${cobradas.toFixed(2)} / ${totalMultas.toFixed(2)}</td>
-        <td><span class="tag tag-${match.estado === 'finalizado' ? 'fin' : 'prog'}">${esc(match.estado)}</span></td></tr>`;
-    }).join('') : '<tr><td colspan="6" class="empty">No hay partidos registrados para rendición.</td></tr>';
-    // Cambia el estado de pago del arbitraje del partido correspondiente.
-    tablaPartidos.querySelectorAll('[data-toggle-arb]').forEach((button) => button.addEventListener('click', async () => {
-      await actualizar('partidos', button.dataset.toggleArb, { arbitraje_pagado: button.dataset.val === 'true' });
-      await cargar();
-    }));
-    // Guarda el costo de arbitraje fijado para un partido.
-    tablaPartidos.querySelectorAll('[data-guardar-arb]').forEach((button) => button.addEventListener('click', async () => {
-      const input = tablaPartidos.querySelector(`[data-arb-partido="${button.dataset.guardarArb}"]`);
-      await actualizar('partidos', button.dataset.guardarArb, { costo_arbitraje: Number(input.value || 0) });
-      await cargar();
-      avisar('aviso-admin', 'Costo de arbitraje actualizado.');
-    }));
-  };
-
-  // Persiste la configuración de multas, inscripción y arbitraje del campeonato.
-  document.getElementById('form-tarifas-base')?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const values = {
-      multa_amarilla: Number(document.getElementById('cfg-tarifa-amarilla').value),
-      multa_roja: Number(document.getElementById('cfg-tarifa-roja').value),
-      monto_inscripcion: Number(document.getElementById('cfg-tarifa-inscripcion').value),
-      costo_arbitraje: Number(document.getElementById('cfg-tarifa-arbitraje').value),
-      actualizado_en: new Date().toISOString()
-    };
-    try {
-      await guardarFinanzas(values);
-      actualizarFinanzas(values);
-      avisar('aviso-admin', 'Tarifas del campeonato actualizadas con éxito.');
-    } catch (error) {
-      alert(`Error al guardar tarifas: ${error.message}`);
-    }
-  });
-  return { render };
 }
 
 // Crea los formularios y el registro administrativo de equipos, plantillas y partidos.
@@ -187,22 +72,22 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
   // Llena los selectores de equipos y conserva su selección actual cuando es posible.
   const poblarSelects = () => {
     const { equipos } = datos();
-    const jugador = document.getElementById('s-equipo-jugador');
-    if (jugador) jugador.innerHTML = equipos.map((team) =>
-      `<option value="${team.id}">${esc(team.nombre)} · ${esc(team.categoria)} (${esc(team.genero)})</option>`
-    ).join('');
+    const categoria = document.getElementById('partido-categoria')?.value || '';
     const local = document.getElementById('s-partido-local');
     const visita = document.getElementById('s-partido-visita');
     if (local && visita) {
-      const options = '<option value="">Seleccionar equipo</option>' + equipos.map((team) =>
+      const compatibles = equipos.filter((team) => !categoria || team.categoria === categoria);
+      const options = '<option value="">Seleccionar equipo</option>' + compatibles.map((team) =>
         `<option value="${team.id}">${esc(team.nombre)} · ${esc(team.categoria)} (${esc(team.genero)})</option>`
       ).join('');
       const localValue = local.value;
       const visitaValue = visita.value;
       local.innerHTML = options;
       visita.innerHTML = options;
-      local.value = localValue;
-      visita.value = visitaValue;
+      local.value = compatibles.some((team) => team.id === localValue) ? localValue : '';
+      visita.value = compatibles.some((team) => team.id === visitaValue) ? visitaValue : '';
+      local.disabled = !categoria;
+      visita.disabled = !categoria;
     }
     renderPlantel('local');
     renderPlantel('visita');
@@ -220,13 +105,15 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
       const stateText = ({ en_juego: 'En Juego', tiempo_extra: 'Tiempo Extra', penales: 'Penales', postergado: 'Postergado' })[match.estado] || match.estado;
       const penalties = match.penales_local != null && match.penales_visitante != null
         ? `<small class="registro-penales">Penales: ${match.penales_local} - ${match.penales_visitante}</small>` : '';
+      const arbitration = `<small class="registro-pagos-arbitraje">Arbitraje: ${esc(names[match.equipo_local_id] || 'Local')} ${match.arbitraje_local_pagado ? 'pagó' : 'no pagó'} · ${esc(names[match.equipo_visitante_id] || 'Visitante')} ${match.arbitraje_visitante_pagado ? 'pagó' : 'no pagó'}</small>`;
       return `<article class="registro-partido">
         <div class="registro-partido-info">
           <strong class="registro-partido-marcador">${esc(names[match.equipo_local_id])}
             <span>${match.goles_local} - ${match.goles_visitante}</span>
             ${esc(names[match.equipo_visitante_id])}</strong>
           ${penalties}
-          <small class="registro-partido-meta">${esc(match.fase)} · ${esc(match.categoria)} (${esc(match.genero)}) · ${fmtFecha(match.fecha_hora)} · Arbitraje: Bs. ${Number(match.costo_arbitraje || 0).toFixed(2)} (${match.arbitraje_pagado ? 'Pagado' : 'Pendiente'})</small>
+          ${arbitration}
+          <small class="registro-partido-meta">${esc(match.fase)} · ${esc(match.categoria)} (${esc(match.genero)}) · ${fmtFecha(match.fecha_hora)}</small>
         </div>
         <div class="registro-partido-acciones"><span class="tag tag-${stateClass}">${esc(stateText)}</span>
         <button class="btn btn-sm" data-abrir-reg="${match.id}">Abrir Planilla</button>
@@ -240,7 +127,7 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
       abrirPlanilla(button.dataset.abrirReg);
       document.querySelector('[data-tab="sec-planilla"]').click();
     }));
-    // Edita fase, fecha y costo después de validar los valores ingresados.
+    // Edita fase y fecha después de validar los valores ingresados.
     container.querySelectorAll('[data-editar-reg]').forEach((button) => button.addEventListener('click', async () => {
       const match = datos().partidos.find((row) => row.id === button.dataset.editarReg);
       if (!match) return;
@@ -248,16 +135,13 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
       if (phase === null) return;
       const dateText = prompt('Fecha y hora (YYYY-MM-DDTHH:MM):', new Date(match.fecha_hora).toISOString().slice(0, 16));
       if (dateText === null) return;
-      const costText = prompt('Costo de arbitraje (Bs.):', match.costo_arbitraje || 30);
-      if (costText === null) return;
       const date = new Date(dateText);
-      const cost = Number(costText);
-      if (!Number.isFinite(date.getTime()) || !Number.isFinite(cost) || cost < 0) {
-        avisar('aviso-admin', 'Ingresa una fecha y un costo de arbitraje válidos.', true);
+      if (!Number.isFinite(date.getTime())) {
+        avisar('aviso-admin', 'Ingresa una fecha y hora válidas.', true);
         return;
       }
       await actualizar('partidos', match.id, {
-        fase: phase.trim() || match.fase, fecha_hora: date.toISOString(), costo_arbitraje: cost
+        fase: phase.trim() || match.fase, fecha_hora: date.toISOString()
       });
       await cargar();
       avisar('aviso-admin', 'Partido editado correctamente.');
@@ -278,30 +162,173 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
     }));
   };
 
+  const renderEquipos = () => {
+    const container = document.getElementById('equipos-registrados');
+    if (!container) return;
+    const { equipos, jugadores } = datos();
+    container.innerHTML = equipos.length ? equipos.map((team) => {
+      const integrantes = jugadores.filter((player) => player.equipo_id === team.id);
+      return `<article class="equipo-admin-card">
+        <div class="equipo-admin-header">
+          <div>
+            <strong>${esc(team.nombre)}</strong>
+            <small>${esc(team.categoria)} · ${esc(team.genero)} · ${integrantes.length} jugador${integrantes.length === 1 ? '' : 'es'}</small>
+          </div>
+          <label class="pago-equipo">
+            <input type="checkbox" data-inscripcion="${team.id}" ${team.inscripcion_pagada ? 'checked' : ''}>
+            <span>Inscripción ${team.inscripcion_pagada ? 'pagada' : 'pendiente'}</span>
+          </label>
+        </div>
+        <ul class="equipo-admin-integrantes">${integrantes.map((player) =>
+          `<li><span>${player.dorsal ? `#${player.dorsal} ` : ''}${esc(player.nombre)}</span>
+            <button type="button" class="btn btn-sm btn-out" data-editar-jugador="${player.id}">Editar</button></li>`
+        ).join('') || '<li class="muted">Sin jugadores</li>'}</ul>
+        <details class="equipo-agregar-jugador">
+          <summary>+ Añadir jugador</summary>
+          <form data-agregar-jugador="${team.id}" class="jugador-rapido-form">
+            <input name="nombre" aria-label="Nombre del jugador" placeholder="Nombre y apellido" required>
+            <input name="dorsal" type="number" min="1" max="99" aria-label="Dorsal" placeholder="Dorsal">
+            <button type="submit" class="btn btn-sm">Guardar</button>
+          </form>
+        </details>
+        <button type="button" class="btn btn-sm btn-red equipo-eliminar" data-eliminar-equipo="${team.id}">
+          Eliminar equipo
+        </button>
+      </article>`;
+    }).join('') : '<p class="empty">No hay equipos registrados.</p>';
+
+    container.querySelectorAll('[data-inscripcion]').forEach((checkbox) => {
+      checkbox.addEventListener('change', async () => {
+        const team = equipos.find((row) => row.id === checkbox.dataset.inscripcion);
+        if (!team) return;
+        const paid = checkbox.checked;
+        checkbox.disabled = true;
+        checkbox.parentElement.querySelector('span').textContent = `Inscripción ${paid ? 'pagada' : 'pendiente'}`;
+        try {
+          await actualizar('equipos', team.id, { inscripcion_pagada: paid });
+          team.inscripcion_pagada = paid;
+          avisar('aviso-admin', `Inscripción de ${team.nombre}: ${paid ? 'pagada' : 'pendiente'}.`);
+        } catch (error) {
+          checkbox.checked = Boolean(team.inscripcion_pagada);
+          checkbox.parentElement.querySelector('span').textContent = `Inscripción ${team.inscripcion_pagada ? 'pagada' : 'pendiente'}`;
+          avisar('aviso-admin', `No se pudo actualizar el pago de inscripción: ${error.message}`, true);
+        } finally {
+          checkbox.disabled = false;
+        }
+      });
+    });
+
+    container.querySelectorAll('[data-agregar-jugador]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const submit = form.querySelector('[type="submit"]');
+        submit.disabled = true;
+        try {
+          const data = new FormData(form);
+          const dorsal = data.get('dorsal');
+          await guardar('jugadores', {
+            equipo_id: form.dataset.agregarJugador,
+            nombre: String(data.get('nombre')).trim(),
+            dorsal: dorsal ? Number(dorsal) : null
+          });
+          await cargar();
+          avisar('aviso-admin', 'Jugador guardado.');
+        } catch (error) {
+          avisar('aviso-admin', `No se pudo guardar el jugador: ${error.message}`, true);
+        } finally {
+          submit.disabled = false;
+        }
+      });
+    });
+
+    container.querySelectorAll('[data-editar-jugador]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const player = jugadores.find((row) => row.id === button.dataset.editarJugador);
+        if (!player) return;
+        const name = prompt('Nombre y apellido:', player.nombre);
+        if (name === null) return;
+        const dorsalText = prompt('Dorsal (deja vacío si no tiene):', player.dorsal ?? '');
+        if (dorsalText === null) return;
+        const trimmedName = name.trim();
+        const dorsal = dorsalText.trim() ? Number(dorsalText) : null;
+        if (!trimmedName || (dorsal !== null && (!Number.isInteger(dorsal) || dorsal < 1 || dorsal > 99))) {
+          avisar('aviso-admin', 'Ingresa un nombre y un dorsal válido entre 1 y 99.', true);
+          return;
+        }
+        button.disabled = true;
+        try {
+          await actualizar('jugadores', player.id, { nombre: trimmedName, dorsal });
+          await cargar();
+          avisar('aviso-admin', 'Jugador actualizado.');
+        } catch (error) {
+          avisar('aviso-admin', `No se pudo actualizar el jugador: ${error.message}`, true);
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+
+    container.querySelectorAll('[data-eliminar-equipo]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const team = equipos.find((row) => row.id === button.dataset.eliminarEquipo);
+        if (!team) return;
+        const relatedMatches = partidos.filter((match) =>
+          match.equipo_local_id === team.id || match.equipo_visitante_id === team.id
+        );
+        const impacts = relatedMatches.length
+          ? ` También se eliminarán ${relatedMatches.length} partido(s), sus incidencias y sanciones.`
+          : '';
+        if (!confirm(`¿Eliminar el equipo "${team.nombre}"? Se eliminarán también sus jugadores.${impacts} Esta acción no se puede deshacer.`)) return;
+
+        button.disabled = true;
+        try {
+          await borrar('equipos', team.id);
+          if (datos().partidoActivo &&
+              (datos().partidoActivo.equipo_local_id === team.id || datos().partidoActivo.equipo_visitante_id === team.id)) {
+            cerrarPlanilla();
+          }
+          await cargar();
+          avisar('aviso-admin', `Equipo "${team.nombre}" eliminado.`);
+        } catch (error) {
+          button.disabled = false;
+          avisar('aviso-admin', `No se pudo eliminar el equipo: ${error.message}`, true);
+        }
+      });
+    });
+  };
+
   // Conecta formularios y selectores con las operaciones de gestión.
   const vincularEventos = () => {
     document.getElementById('s-partido-local')?.addEventListener('change', () => renderPlantel('local'));
     document.getElementById('s-partido-visita')?.addEventListener('change', () => renderPlantel('visita'));
+    document.getElementById('partido-categoria')?.addEventListener('change', () => {
+      poblarSelects();
+    });
     // Valida y registra un encuentro nuevo con sus equipos, capitanes y reloj inicial.
     document.getElementById('form-partido').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const { equipos, finanzasCfg } = datos();
+      const { equipos } = datos();
       const localId = document.getElementById('s-partido-local').value;
       const visitanteId = document.getElementById('s-partido-visita').value;
+      const categoria = document.getElementById('partido-categoria').value;
       if (!localId || !visitanteId || localId === visitanteId) {
         alert('Selecciona dos equipos distintos.');
         return;
       }
       const local = equipos.find((team) => team.id === localId);
+      const visitante = equipos.find((team) => team.id === visitanteId);
+      if (!categoria || !local || !visitante || local.categoria !== categoria || visitante.categoria !== categoria) {
+        avisar('aviso-admin', 'Selecciona una categoría y dos equipos de esa misma categoría.', true);
+        return;
+      }
       const result = await guardar('partidos', {
         fase: document.getElementById('partido-fase').value.trim(),
         fecha_hora: new Date(document.getElementById('partido-fecha').value).toISOString(),
-        categoria: local.categoria, genero: local.genero,
+        categoria, genero: local.genero,
         equipo_local_id: localId, equipo_visitante_id: visitanteId,
         capitan_local_id: document.getElementById('s-cap-local').value || null,
         capitan_visitante_id: document.getElementById('s-cap-visita').value || null,
-        costo_arbitraje: Number(document.getElementById('partido-arbitraje')?.value || finanzasCfg.costo_arbitraje || 30),
-        arbitraje_pagado: false, reloj_segundos: 60, periodo: 1, estado: 'programado'
+        reloj_segundos: 60, periodo: 1, estado: 'programado'
       });
       document.getElementById('form-partido').reset();
       document.getElementById('plantel-local').innerHTML = '';
@@ -311,37 +338,37 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
       if (id) abrirPlanilla(id);
       avisar('aviso-admin', 'Partido programado exitosamente.');
     });
-    // Registra un equipo y sus datos de inscripción.
-    document.getElementById('form-equipo').addEventListener('submit', async (event) => {
+    const formEquipo = document.getElementById('form-equipo');
+    // Registra un equipo; los integrantes se gestionan de forma compacta en su tarjeta.
+    formEquipo.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const { finanzasCfg } = datos();
-      await guardar('equipos', {
-        nombre: document.getElementById('equipo-nombre').value.trim(),
-        categoria: document.getElementById('equipo-categoria').value.trim(),
-        genero: document.getElementById('equipo-genero').value,
-        monto_inscripcion: Number(document.getElementById('equipo-inscripcion')?.value || finanzasCfg.monto_inscripcion || 50),
-        inscripcion_pagada: document.getElementById('equipo-inscripcion-pagada').checked
-      });
-      document.getElementById('form-equipo').reset();
-      await cargar();
-      avisar('aviso-admin', 'Equipo guardado.');
-    });
-    // Incorpora un jugador a la plantilla del equipo seleccionado.
-    document.getElementById('form-jugador').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const dorsal = document.getElementById('jugador-dorsal').value;
-      await guardar('jugadores', {
-        equipo_id: document.getElementById('s-equipo-jugador').value,
-        nombre: document.getElementById('jugador-nombre').value.trim(),
-        dorsal: dorsal ? Number(dorsal) : null
-      });
-      document.getElementById('form-jugador').reset();
-      await cargar();
-      avisar('aviso-admin', 'Jugador guardado.');
+      const submit = formEquipo.querySelector('[type="submit"]');
+      submit.disabled = true;
+      try {
+        const result = await guardar('equipos', {
+          nombre: document.getElementById('equipo-nombre').value.trim(),
+          categoria: document.getElementById('equipo-categoria').value.trim(),
+          genero: document.getElementById('equipo-genero').value,
+          inscripcion_pagada: document.getElementById('equipo-inscripcion-pagada').checked
+        });
+        if (!Array.isArray(result) || !result[0]?.id) throw new Error('No se recibió confirmación del equipo guardado.');
+        formEquipo.reset();
+        await cargar();
+        avisar('aviso-admin', 'Equipo guardado. Ya puedes añadir sus jugadores desde la tarjeta.');
+      } catch (error) {
+        try {
+          await cargar();
+        } catch (loadError) {
+          avisar('aviso-admin', `Error al actualizar la lista: ${loadError.message}`, true);
+        }
+        avisar('aviso-admin', `No se pudo registrar el equipo: ${error.message}`, true);
+      } finally {
+        submit.disabled = false;
+      }
     });
   };
 
-  return { poblarSelects, renderRegistro, vincularEventos, jugadorSuspendido };
+  return { poblarSelects, renderRegistro, renderEquipos, vincularEventos, jugadorSuspendido };
 }
 
 // La tanda y sus resultados se conservan al reabrir la planilla.

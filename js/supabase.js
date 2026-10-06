@@ -133,38 +133,6 @@ export async function borrar(tabla, id) {
 }
 
 /**
- * Obtiene la configuracion financiera activa del campeonato (multas, arbitraje, inscripciones)
- * @returns {Promise<Object>} Datos de tarifas base
- */
-export async function obtenerFinanzas() {
-  const data = await leer('configuracion_finanzas').catch(() => []);
-  return data[0] || {
-    multa_amarilla: 10.00,
-    multa_roja: 20.00,
-    costo_arbitraje: 30.00,
-    monto_inscripcion: 50.00
-  };
-}
-
-/**
- * Actualiza las tarifas financieras base del campeonato en la tabla configuracion_finanzas
- * @param {Object} datos Valores de multas, arbitraje e inscripcion
- * @returns {Promise<Array>} Registro actualizado
- */
-export async function guardarFinanzas(datos) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/configuracion_finanzas?id=eq.1`, {
-    method: 'PATCH',
-    headers: headers(),
-    body: JSON.stringify(datos)
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || 'Error al actualizar finanzas');
-  }
-  return await res.json();
-}
-
-/**
  * Reinicia el campeonato eliminando todos los partidos disputados.
  * Debido a las relaciones en cascada (ON DELETE CASCADE), se eliminan
  * automaticamente los eventos de gol, tarjetas y sanciones asociadas.

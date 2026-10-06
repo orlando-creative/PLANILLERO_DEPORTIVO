@@ -1,1369 +1,1493 @@
-   /* //HOJA DE ESTILOS PRINCIPAL - PLANILLERO DEPORTIVO */
-
-   :root {
-     /* Tipografia y textos */
-     --color-texto: #162621;
-     --color-texto-secundario: #5e6f68;
-
-     /* Fondos y superficies */
-     --color-fondo: #f4f6f0;
-     --color-blanco: #ffffff;
-
-     /* Identidad deportiva institucional */
-     --color-verde: #176b50;
-     --color-verde-oscuro: #0e4936;
-     --color-lima: #d5ef63;
-
-     /* Separadores y bordes */
-     --color-borde: #d2ddd5;
-
-     /* Alertas, tarjetas y estados */
-     --color-rojo: #c0392b;
-     --color-amarillo: #f1c40f;
-
-     /* Elevaciones */
-     --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.05);
-   }
-
-   /* --------------------------------------------------------------------------
-   2. REINICIO Y ESTILOS BASE DEL DOCUMENTO
-   -------------------------------------------------------------------------- */
-   *,
-   *::before,
-   *::after {
-     box-sizing: border-box;
-     margin: 0;
-     padding: 0;
-   }
-
-   body {
-     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-     background-color: var(--color-fondo);
-     color: var(--color-texto);
-     line-height: 1.45;
-   }
-
-   /* --------------------------------------------------------------------------
-   3. CONTENEDORES Y ESTRUCTURA GENERAL
-   -------------------------------------------------------------------------- */
-   .contenedor {
-     max-width: 1100px;
-     margin: 0 auto;
-     padding: 0 16px;
-   }
-
-   /* --------------------------------------------------------------------------
-   4. ENCABEZADO Y NAVEGACION
-   -------------------------------------------------------------------------- */
-   .header-top {
-     background-color: var(--color-verde-oscuro);
-     color: #cdecd8;
-     font-size: 0.8rem;
-     padding: 6px 0;
-     text-align: center;
-     font-weight: 600;
-   }
-
-   .header-main {
-     background-color: var(--color-verde);
-     color: var(--color-blanco);
-     border-bottom: 3px solid var(--color-lima);
-     padding: 12px 0;
-   }
-
-   .header-bar {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     flex-wrap: wrap;
-     gap: 10px;
-   }
-
-   .marca {
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     text-decoration: none;
-     color: var(--color-blanco);
-   }
-
-   .marca img {
-     width: 36px;
-     height: 36px;
-   }
-
-   .marca-tit {
-     font-size: 1.15rem;
-     font-weight: 800;
-     letter-spacing: 0.5px;
-   }
-
-   .marca-tit span {
-     color: var(--color-lima);
-   }
-
-   .nav-links {
-     display: flex;
-     gap: 6px;
-     align-items: center;
-     flex-wrap: wrap;
-   }
-
-   .nav-links a {
-     color: #e4f4ea;
-     text-decoration: none;
-     padding: 6px 12px;
-     border-radius: 4px;
-     font-size: 0.88rem;
-     font-weight: 600;
-     transition: background-color 0.15s ease, color 0.15s ease;
-   }
-
-   .nav-links a:hover,
-   .nav-links a.activo {
-     background-color: rgba(255, 255, 255, 0.18);
-     color: var(--color-blanco);
-   }
-
-   .nav-links .admin-link {
-     background-color: #0b3d2c;
-     border: 1px solid var(--color-lima);
-     color: var(--color-lima);
-   }
-
-   /* --------------------------------------------------------------------------
-   5. SECCIONES PRINCIPALES (HERO Y PANELES)
-   -------------------------------------------------------------------------- */
-   .hero {
-     padding: 24px 0 18px;
-     border-bottom: 1px solid var(--color-borde);
-     margin-bottom: 20px;
-   }
-
-   .hero-tag {
-     font-size: 0.75rem;
-     text-transform: uppercase;
-     font-weight: 800;
-     color: var(--color-verde);
-     letter-spacing: 1px;
-   }
-
-   .hero h1 {
-     font-size: 1.85rem;
-     margin: 4px 0 6px;
-   }
-
-   .hero p {
-     color: var(--color-texto-secundario);
-     font-size: 0.95rem;
-   }
-
-   .panel {
-     background-color: var(--color-blanco);
-     border: 1px solid var(--color-borde);
-     border-radius: 8px;
-     padding: 18px;
-     margin-bottom: 20px;
-     box-shadow: var(--sombra-suave);
-   }
-
-   .panel h2,
-   .panel h3 {
-     margin-bottom: 10px;
-     color: var(--color-verde-oscuro);
-     font-size: 1.25rem;
-   }
-
-   .grid-2 {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 16px;
-   }
-
-   .grid-3 {
-     display: grid;
-     grid-template-columns: repeat(3, 1fr);
-     gap: 12px;
-     margin-bottom: 20px;
-   }
-
-   .stat-card {
-     background-color: var(--color-blanco);
-     border: 1px solid var(--color-borde);
-     border-radius: 6px;
-     padding: 14px;
-     text-align: center;
-   }
-
-   .stat-num {
-     font-size: 1.7rem;
-     font-weight: 800;
-     color: var(--color-verde);
-     display: block;
-   }
-
-   .stat-lbl {
-     font-size: 0.8rem;
-     color: var(--color-texto-secundario);
-     text-transform: uppercase;
-   }
-
-   /* --------------------------------------------------------------------------
-   6. FORMULARIOS Y CAMPOS DE ENTRADA
-   -------------------------------------------------------------------------- */
-   .form-group {
-     display: grid;
-     gap: 5px;
-     margin-bottom: 12px;
-   }
-
-   .form-group label {
-     font-size: 0.82rem;
-     font-weight: 700;
-   }
-
-   .form-group input,
-   .form-group select {
-     width: 100%;
-     min-height: 38px;
-     padding: 6px 10px;
-     border: 1px solid #b7c7be;
-     border-radius: 5px;
-     font: inherit;
-     background-color: var(--color-blanco);
-   }
-
-   .form-group input:focus,
-   .form-group select:focus {
-     outline: 2px solid var(--color-verde);
-   }
-
-   /* --------------------------------------------------------------------------
-   7. BOTONES E INTERACTIVOS
-   -------------------------------------------------------------------------- */
-   .btn {
-     display: inline-flex;
-     justify-content: center;
-     align-items: center;
-     gap: 6px;
-     min-height: 36px;
-     padding: 6px 14px;
-     border: 0;
-     border-radius: 5px;
-     background-color: var(--color-verde);
-     color: var(--color-blanco);
-     font: inherit;
-     font-size: 0.86rem;
-     font-weight: 700;
-     cursor: pointer;
-     text-decoration: none;
-     transition: background-color 0.15s ease;
-   }
-
-   .btn:hover {
-     background-color: var(--color-verde-oscuro);
-   }
-
-   .btn-sm {
-     min-height: 30px;
-     padding: 4px 10px;
-     font-size: 0.8rem;
-   }
-
-   .btn-out {
-     background-color: transparent;
-     border: 1px solid var(--color-verde);
-     color: var(--color-verde);
-   }
-
-   .btn-out:hover {
-     background-color: #eaf3ed;
-   }
-
-   .btn-red {
-     background-color: var(--color-rojo);
-   }
-
-   .btn-red:hover {
-     background-color: #962d22;
-   }
-
-   /* --------------------------------------------------------------------------
-   8. TABLAS DE DATOS
-   -------------------------------------------------------------------------- */
-   .tabla-wrap {
-     overflow-x: auto;
-     -webkit-overflow-scrolling: touch;
-     background-color: var(--color-blanco);
-     border: 1px solid var(--color-borde);
-     border-radius: 6px;
-   }
-
-   table {
-     width: 100%;
-     border-collapse: collapse;
-     table-layout: auto;
-     font-size: 0.88rem;
-     text-align: left;
-   }
-
-   th,
-   td {
-     padding: 9px 12px;
-     border-bottom: 1px solid #e7ede8;
-     vertical-align: middle;
-     white-space: nowrap;
-   }
-
-   th {
-     background-color: #e9f1eb;
-     font-size: 0.76rem;
-     text-transform: uppercase;
-     color: #2e473b;
-     text-align: left;
-   }
-
-   tbody tr:nth-child(even) {
-     background-color: #fbfcfa;
-   }
-
-   tbody tr:hover {
-     background-color: #f1f7f2;
-   }
-
-   tr:last-child td {
-     border-bottom: 0;
-   }
-
-   .resultado-partido {
-     display: inline-flex;
-     align-items: center;
-     flex-wrap: wrap;
-     gap: 5px;
-   }
-
-   .resultado-partido strong {
-     color: var(--color-verde-oscuro);
-     white-space: nowrap;
-   }
-
-   .resultado-penales,
-   .registro-penales {
-     display: block;
-     color: #7d6608;
-     font-weight: 800;
-   }
-
-   .registro-partido {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     gap: 14px;
-     padding: 14px 0;
-     border-bottom: 1px solid var(--color-borde);
-   }
-
-   .registro-partido:last-child {
-     border-bottom: 0;
-   }
-
-   .registro-partido-info {
-     display: grid;
-     min-width: 0;
-     gap: 4px;
-   }
-
-   .registro-partido-marcador {
-     display: flex;
-     flex-wrap: wrap;
-     align-items: center;
-     gap: 8px;
-   }
-
-   .registro-partido-marcador span {
-     color: var(--color-verde-oscuro);
-     font-size: 1.1rem;
-     white-space: nowrap;
-   }
-
-   .registro-partido-meta {
-     color: var(--color-texto-secundario);
-   }
-
-   .registro-partido-acciones {
-     display: flex;
-     flex-wrap: wrap;
-     justify-content: flex-end;
-     align-items: center;
-     gap: 6px;
-     flex-shrink: 0;
-   }
-
-   .empty {
-     text-align: center;
-     color: var(--color-texto-secundario);
-     padding: 18px;
-   }
-
-   /* --------------------------------------------------------------------------
-   9. ETIQUETAS, BADGES Y AMONESTACIONES
-   -------------------------------------------------------------------------- */
-   .tag {
-     display: inline-block;
-     padding: 3px 8px;
-     border-radius: 4px;
-     font-size: 0.75rem;
-     font-weight: 700;
-     text-transform: uppercase;
-   }
-
-   .tag-prog {
-     background-color: #fef5d1;
-     color: #7d6608;
-   }
-
-   .tag-juego {
-     background-color: #d4efdf;
-     color: #196f3d;
-   }
-
-   .tag-fin {
-     background-color: #eaeded;
-     color: #5d6d7e;
-   }
-
-   .tag-desc {
-     background-color: #d6eaf8;
-     color: #21618c;
-   }
-
-   .badge-tarj {
-     display: inline-block;
-     width: 14px;
-     height: 18px;
-     border-radius: 2px;
-     vertical-align: middle;
-   }
-
-   .badge-tarj.amarilla {
-     background-color: var(--color-amarillo);
-     border: 1px solid #d4ac0d;
-   }
-
-   .badge-tarj.roja {
-     background-color: var(--color-rojo);
-     border: 1px solid #962d22;
-   }
-
-   .badge-cap {
-     background-color: #fdf3d8;
-     color: #8d6b05;
-     border: 1px solid #f9e79f;
-     padding: 2px 6px;
-     border-radius: 3px;
-     font-size: 0.72rem;
-     font-weight: 800;
-   }
-
-   /* --------------------------------------------------------------------------
-   10. PLANILLA EN VIVO, MARCADOR Y CRONOMETRO
-   -------------------------------------------------------------------------- */
-   .marcador {
-     display: grid;
-     grid-template-columns: 1fr auto 1fr;
-     align-items: center;
-     gap: 12px;
-     text-align: center;
-     background-color: #0f241c;
-     color: var(--color-blanco);
-     padding: 18px;
-     border-radius: 8px;
-     margin: 14px 0;
-   }
-
-   .marcador-nombre {
-     font-size: 1.3rem;
-     font-weight: 800;
-     display: block;
-   }
-
-   .marcador-goles {
-     font-size: 3rem;
-     font-weight: 900;
-     color: var(--color-lima);
-     font-family: ui-monospace, Consolas, monospace;
-   }
-
-   .reloj-box {
-     background-color: #132a21;
-     border-radius: 6px;
-     padding: 14px;
-     text-align: center;
-     margin-bottom: 16px;
-     border-top: 2px solid #235442;
-   }
-
-   .reloj-num {
-     font-size: 2.6rem;
-     font-weight: 800;
-     color: var(--color-lima);
-     font-family: ui-monospace, Consolas, monospace;
-     letter-spacing: 2px;
-   }
-
-   .reloj-tit {
-     font-size: 0.85rem;
-     color: #ffffff;
-     text-transform: uppercase;
-     font-weight: 700;
-     display: block;
-     margin-bottom: 4px;
-   }
-
-   .lista-eventos {
-     list-style: none;
-   }
-
-   .lista-eventos li {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     padding: 8px 0;
-     border-bottom: 1px solid var(--color-borde);
-     font-size: 0.86rem;
-   }
-
-   /* --------------------------------------------------------------------------
-   11. PESTANAS DE NAVEGACION
-   -------------------------------------------------------------------------- */
-   .tabs {
-     display: flex;
-     gap: 6px;
-     border-bottom: 2px solid var(--color-borde);
-     margin-bottom: 18px;
-   }
-
-   .tab-btn {
-     background: none;
-     border: 0;
-     padding: 8px 16px;
-     font: inherit;
-     font-size: 0.9rem;
-     font-weight: 700;
-     color: var(--color-texto-secundario);
-     cursor: pointer;
-     border-radius: 5px 5px 0 0;
-   }
-
-   .tab-btn.activo {
-     color: var(--color-verde);
-     border-bottom: 3px solid var(--color-verde);
-     background-color: var(--color-blanco);
-   }
-
-   /* --------------------------------------------------------------------------
-   12. AVISOS Y MENSAJES DE ALERTA
-   -------------------------------------------------------------------------- */
-   .aviso {
-     padding: 10px 14px;
-     border-left: 4px solid var(--color-verde);
-     background-color: #e8f3ea;
-     margin-bottom: 14px;
-     border-radius: 0 4px 4px 0;
-     font-size: 0.88rem;
-   }
-
-   .aviso-error {
-     border-color: var(--color-rojo);
-     background-color: #fdeee9;
-     color: var(--color-rojo);
-   }
-
-   .aviso-ok {
-     border-color: var(--color-verde);
-     background-color: #e8f4ed;
-     color: var(--color-verde-oscuro);
-   }
-
-   /* --------------------------------------------------------------------------
-   13. PIE DE PAGINA (FOOTER)
-   -------------------------------------------------------------------------- */
-   footer {
-     background-color: var(--color-verde-oscuro);
-     color: #cdecd8;
-     text-align: center;
-     padding: 18px 0;
-     font-size: 0.82rem;
-     margin-top: 40px;
-   }
-
-   footer a {
-     color: var(--color-lima);
-     text-decoration: none;
-     margin: 0 6px;
-   }
-
-   /* --------------------------------------------------------------------------
-   15. TARJETAS DE PARTIDOS PROGRAMADOS
-   -------------------------------------------------------------------------- */
-   .partido-card {
-     background-color: var(--color-blanco);
-     border: 1px solid var(--color-borde);
-     border-radius: 8px;
-     padding: 14px;
-     margin-bottom: 10px;
-     transition: box-shadow 0.15s ease;
-   }
-
-   .partido-card:hover {
-     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-   }
-
-   .partido-card-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 8px;
-     flex-wrap: wrap;
-     gap: 6px;
-   }
-
-   .partido-card-equipos {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     gap: 12px;
-     font-size: 1.05rem;
-     padding: 6px 0;
-   }
-
-   .partido-card-vs {
-     font-size: 1.4rem;
-     font-weight: 900;
-     color: var(--color-verde);
-     font-family: ui-monospace, Consolas, monospace;
-   }
-
-   .partido-card-meta {
-     text-align: center;
-     color: var(--color-texto-secundario);
-     margin-bottom: 8px;
-   }
-
-   .partido-card-acciones {
-     display: flex;
-     justify-content: center;
-     gap: 6px;
-     flex-wrap: wrap;
-   }
-
-   /* --------------------------------------------------------------------------
-   16. PLANTEL DE EQUIPO (LISTA DE JUGADORES CON SUSPENSIONES)
-   -------------------------------------------------------------------------- */
-   .plantel-contenedor {
-     border: 1px solid var(--color-borde);
-     border-radius: 6px;
-     max-height: 220px;
-     overflow-y: auto;
-     margin-bottom: 10px;
-   }
-
-   .plantel-lista {
-     padding: 0;
-   }
-
-   .plantel-jugador {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     padding: 7px 10px;
-     border-bottom: 1px solid #eef1ee;
-     font-size: 0.84rem;
-     transition: background-color 0.1s ease;
-   }
-
-   .plantel-jugador:last-child {
-     border-bottom: 0;
-   }
-
-   .plantel-jugador:hover {
-     background-color: #f6f9f6;
-   }
-
-   .plantel-suspendido {
-     background-color: #fef0ed !important;
-     color: var(--color-rojo);
-     font-weight: 700;
-   }
-
-   .plantel-suspendido:hover {
-     background-color: #fde5df !important;
-   }
-
-   .plantel-info {
-     display: flex;
-     align-items: center;
-     gap: 6px;
-     flex-wrap: wrap;
-   }
-
-   .tag-suspension {
-     background-color: var(--color-rojo);
-     color: #fff;
-     font-size: 0.65rem;
-     padding: 1px 5px;
-     border-radius: 3px;
-     font-weight: 800;
-     text-transform: uppercase;
-   }
-
-   .plantel-tarjetas {
-     display: flex;
-     gap: 4px;
-   }
-
-   .badge-mini-tarj {
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     width: 20px;
-     height: 16px;
-     border-radius: 2px;
-     font-size: 0.65rem;
-     font-weight: 800;
-     color: #fff;
-   }
-
-   .badge-mini-tarj.amarilla {
-     background-color: var(--color-amarillo);
-     color: #7d6608;
-   }
-
-   .badge-mini-tarj.roja {
-     background-color: var(--color-rojo);
-   }
-
-   /* --------------------------------------------------------------------------
-   17. MEJORAS VISUALES A LA PLANILLA EN VIVO
-   -------------------------------------------------------------------------- */
-   .panel-programar {
-     border-left: 4px solid var(--color-verde);
-   }
-
-   .programar-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 14px;
-     flex-wrap: wrap;
-     gap: 6px;
-   }
-
-   .planilla-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 10px;
-     flex-wrap: wrap;
-     gap: 6px;
-   }
-
-   .panel-planilla-vivo {
-     border: 2px solid var(--color-verde);
-     border-radius: 10px;
-   }
-
-   .panel-arbitraje {
-     background: #f9fbf9;
-     border: 1px solid var(--color-borde);
-     border-radius: 6px;
-     margin-bottom: 14px;
-     padding: 12px;
-   }
-
-   .panel-incidencia {
-     margin: 0;
-     background: #fbfdfb;
-   }
-
-   .reloj-controles {
-     display: flex;
-     justify-content: center;
-     gap: 8px;
-     margin-top: 10px;
-     flex-wrap: wrap;
-   }
-
-   /* ── Marcador y Ajustes de Goles ── */
-   .marcador-equipo-lado {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     gap: 5px;
-   }
-
-   .marcador-etiqueta-lado {
-     font-size: 0.72rem;
-     font-weight: 800;
-     letter-spacing: 1px;
-     color: #a8c5b9;
-   }
-
-   .marcador-centro {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-   }
-
-   .marcador-separador {
-     margin: 0 4px;
-     opacity: 0.6;
-   }
-
-   .marcador-subtitulo {
-     color: #a8c5b9;
-     text-transform: uppercase;
-     font-size: 0.7rem;
-     letter-spacing: 0.5px;
-   }
-
-   .marcador-ajustes {
-     display: flex;
-     gap: 6px;
-     margin-top: 8px;
-   }
-
-   .btn-gol-ajuste {
-     background: rgba(255, 255, 255, 0.15);
-     border: 1px solid rgba(255, 255, 255, 0.3);
-     color: #ffffff;
-     padding: 4px 10px;
-     font-size: 0.78rem;
-     font-weight: 700;
-     border-radius: 4px;
-     cursor: pointer;
-     transition: all 0.15s ease;
-   }
-
-   .btn-gol-ajuste:hover {
-     background: rgba(255, 255, 255, 0.3);
-     transform: translateY(-1px);
-   }
-
-   .btn-gol-ajuste.mas {
-     background: var(--color-verde);
-     border-color: var(--color-lima);
-     color: var(--color-lima);
-   }
-
-   .btn-gol-ajuste.mas:hover {
-     background: var(--color-verde-oscuro);
-   }
-
-   .btn-gol-ajuste.menos {
-     background: rgba(192, 57, 43, 0.4);
-     border-color: var(--color-rojo);
-     color: #ffb3ba;
-   }
-
-   .btn-gol-ajuste.menos:hover {
-     background: var(--color-rojo);
-     color: #ffffff;
-   }
-
-   /* ── Paneles de Incidencias por Equipo (Cero confusión) ── */
-   .panel-lado-local {
-     border-top: 4px solid var(--color-verde);
-     background: #f7faf7;
-     padding: 16px;
-     border-radius: 8px;
-     border: 1px solid #dce8dd;
-   }
-
-   .panel-lado-visita {
-     border-top: 4px solid #2980b9;
-     background: #f4f8fb;
-     padding: 16px;
-     border-radius: 8px;
-     border: 1px solid #d4e3ee;
-   }
-
-   .panel-lado-header {
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     margin-bottom: 6px;
-   }
-
-   .badge-lado {
-     font-size: 0.72rem;
-     font-weight: 800;
-     padding: 3px 8px;
-     border-radius: 4px;
-     letter-spacing: 0.5px;
-   }
-
-   .badge-lado.local {
-     background: #e8f5e9;
-     color: var(--color-verde-oscuro);
-     border: 1px solid var(--color-verde);
-   }
-
-   .badge-lado.visita {
-     background: #e3f2fd;
-     color: #1565c0;
-     border: 1px solid #90caf9;
-   }
-
-   .select-jugador {
-     width: 100%;
-     font-size: 0.92rem;
-     font-weight: 600;
-     padding: 8px 10px;
-   }
-
-   .incidencia-acciones {
-     display: flex;
-     flex-direction: column;
-     gap: 8px;
-     margin-top: 10px;
-   }
-
-   .btn-incidencia {
-     width: 100%;
-     font-weight: 800;
-     padding: 10px;
-     font-size: 0.95rem;
-     cursor: pointer;
-   }
-
-   .btn-inc-gol {
-     background: var(--color-verde);
-     color: #ffffff;
-     border: none;
-     border-radius: 6px;
-     transition: background 0.15s;
-   }
-
-   .btn-inc-gol:hover {
-     background: var(--color-verde-oscuro);
-   }
-
-   .incidencia-tarjetas {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 8px;
-   }
-
-   .btn-amarillo {
-     background: var(--color-amarillo);
-     color: #614a00;
-     border: 1px solid #d4ac0d;
-     font-weight: 700;
-   }
-
-   .btn-amarillo:hover {
-     background: #f4d03f;
-   }
-
-   .btn-rojo {
-     background: var(--color-rojo);
-     color: #ffffff;
-     border: 1px solid #a93226;
-     font-weight: 700;
-   }
-
-   .btn-rojo:hover {
-     background: #a93226;
-   }
-
-   .badge-stat-pill {
-     font-size: 0.75rem;
-     font-weight: 700;
-     padding: 3px 8px;
-     border-radius: 12px;
-     background: #e9ecef;
-     color: #495057;
-   }
-
-   /* ── Modulo de Definicion por Penales (5 Tiros) ── */
-   .panel-penales {
-     background: #11261d;
-     color: #ffffff;
-     border: 2px solid var(--color-lima);
-     border-radius: 8px;
-     margin-bottom: 16px;
-     padding: 16px;
-   }
-
-   .penales-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     flex-wrap: wrap;
-     gap: 10px;
-     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-     padding-bottom: 10px;
-   }
-
-   .badge-penales {
-     background: var(--color-lima);
-     color: #0f241c;
-     font-size: 0.7rem;
-     font-weight: 800;
-     padding: 2px 8px;
-     border-radius: 4px;
-     letter-spacing: 1px;
-   }
-
-   .penales-marcador-global {
-     font-size: 2.2rem;
-     font-weight: 900;
-     color: var(--color-lima);
-     font-family: ui-monospace, Consolas, monospace;
-   }
-
-   .panel-tiros-equipo {
-     background: rgba(255, 255, 255, 0.05);
-     border: 1px solid rgba(255, 255, 255, 0.15);
-     border-radius: 6px;
-     padding: 12px;
-   }
-
-   .tiros-equipo-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 8px;
-   }
-
-   .badge-tiros-total {
-     font-size: 0.8rem;
-     font-weight: 800;
-     color: var(--color-lima);
-   }
-
-   .tiros-indicadores {
-     display: flex;
-     gap: 6px;
-     margin: 10px 0;
-     flex-wrap: wrap;
-   }
-
-   .tiro-slot {
-     display: inline-flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: center;
-     min-width: 42px;
-     height: 38px;
-     border-radius: 4px;
-     font-size: 0.72rem;
-     font-weight: 800;
-     border: 1px solid rgba(255, 255, 255, 0.2);
-     background: rgba(0, 0, 0, 0.2);
-   }
-
-   .tiro-slot.gol {
-     background: var(--color-verde);
-     border-color: var(--color-lima);
-     color: var(--color-lima);
-   }
-
-   .tiro-slot.fallo {
-     background: rgba(192, 57, 43, 0.6);
-     border-color: var(--color-rojo);
-     color: #ffffff;
-   }
-
-   .tiro-slot.pendiente {
-     background: rgba(255, 255, 255, 0.05);
-     color: #8fa39a;
-   }
-
-   .tiros-botones {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 6px;
-     margin-top: 8px;
-   }
-
-   .penales-acciones-pie {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     flex-wrap: wrap;
-     gap: 10px;
-     margin-top: 14px;
-     padding-top: 10px;
-     border-top: 1px solid rgba(255, 255, 255, 0.1);
-   }
-
-   /* --------------------------------------------------------------------------
-   18. REGLAS RESPONSIVAS (MEDIA QUERIES)
-   -------------------------------------------------------------------------- */
-   @media (max-width: 768px) {
-
-     .grid-2,
-     .grid-3 {
-       grid-template-columns: 1fr;
-     }
-
-     .marcador {
-       grid-template-columns: 1fr;
-       gap: 8px;
-     }
-
-     .marcador-goles {
-       font-size: 2.3rem;
-     }
-
-     .header-bar {
-       flex-direction: column;
-       align-items: flex-start;
-     }
-
-     .tabs {
-       flex-wrap: wrap;
-     }
-
-     .partido-card-equipos {
-       flex-direction: column;
-       gap: 4px;
-     }
-
-     .tabla-wrap {
-       margin-left: -6px;
-       margin-right: -6px;
-       max-width: calc(100% + 12px);
-     }
-
-     table {
-       font-size: 0.82rem;
-     }
-
-     th,
-     td {
-       padding: 8px;
-     }
-
-     .tabla-partidos thead {
-       display: none;
-     }
-
-     .tabla-partidos,
-     .tabla-partidos tbody,
-     .tabla-partidos tr,
-     .tabla-partidos td {
-       display: block;
-       width: 100%;
-     }
-
-     .tabla-partidos tbody tr {
-       padding: 8px 12px;
-       border-bottom: 1px solid var(--color-borde);
-     }
-
-     .tabla-partidos tbody tr:last-child {
-       border-bottom: 0;
-     }
-
-     .tabla-partidos td {
-       display: grid;
-       grid-template-columns: minmax(100px, 34%) minmax(0, 1fr);
-       gap: 8px;
-       padding: 5px 0;
-       border: 0;
-       white-space: normal;
-       overflow-wrap: anywhere;
-     }
-
-     .tabla-partidos td::before {
-       content: attr(data-label);
-       color: var(--color-texto-secundario);
-       font-size: 0.72rem;
-       font-weight: 800;
-       text-transform: uppercase;
-     }
-
-     .tabla-partidos td.empty {
-       display: block;
-       text-align: center;
-     }
-
-     .tabla-partidos td.empty::before {
-       content: none;
-     }
-
-     .tabla-partidos .resultado-partido {
-       gap: 4px;
-     }
-
-     .registro-partido {
-       align-items: stretch;
-       flex-direction: column;
-       gap: 10px;
-     }
-
-     .registro-partido-acciones {
-       justify-content: flex-start;
-     }
-   }
-
-   /* ────────────────────────────────────────────────────────────────────────────
-      MODULO DE PENALES Y TIEMPO EXTRA
-   ──────────────────────────────────────────────────────────────────────────── */
-
-   /* Panel contenedor de la tanda de penales */
-   .panel-penales {
-     background: linear-gradient(135deg, #fef9e7 0%, #fdf2d5 100%);
-     border: 2px solid #f0c75e;
-     border-radius: 10px;
-     padding: 20px;
-     margin-top: 16px;
-   }
-
-   .penales-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: flex-start;
-     flex-wrap: wrap;
-     gap: 12px;
-   }
-
-   .badge-penales {
-     display: inline-block;
-     padding: 3px 10px;
-     border-radius: 4px;
-     font-size: 0.7rem;
-     font-weight: 900;
-     letter-spacing: 1px;
-     text-transform: uppercase;
-     background: #e74c3c;
-     color: #fff;
-   }
-
-   .penales-marcador-global {
-     font-size: 2.2rem;
-     font-weight: 900;
-     color: var(--color-verde-oscuro);
-     letter-spacing: 2px;
-   }
-
-   /* Panel de tiros por equipo */
-   .panel-tiros-equipo {
-     background: var(--color-blanco);
-     border: 1px solid var(--color-borde);
-     border-radius: 8px;
-     padding: 14px;
-   }
-
-   .tiros-equipo-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 10px;
-     flex-wrap: wrap;
-     gap: 6px;
-   }
-
-   .badge-tiros-total {
-     display: inline-block;
-     padding: 2px 8px;
-     border-radius: 4px;
-     font-size: 0.75rem;
-     font-weight: 800;
-     background: var(--color-verde);
-     color: #fff;
-   }
-
-   /* Indicadores visuales de cada tiro (circulo con estado) */
-   .tiros-indicadores {
-     display: flex;
-     gap: 6px;
-     flex-wrap: wrap;
-     margin-bottom: 10px;
-     min-height: 36px;
-   }
-
-   .tiro-slot {
-     width: 36px;
-     height: 36px;
-     border-radius: 50%;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 0.75rem;
-     font-weight: 900;
-     border: 2px solid var(--color-borde);
-     background: #f9f9f9;
-     color: #999;
-     transition: all 0.2s ease;
-   }
-
-   .tiro-slot.tiro-gol {
-     background: var(--color-verde);
-     color: #fff;
-     border-color: var(--color-verde-oscuro);
-   }
-
-   .tiro-slot.tiro-fallo {
-     background: var(--color-rojo);
-     color: #fff;
-     border-color: #922b21;
-   }
-
-   .tiro-slot.tiro-pendiente {
-     background: #f9f9f9;
-     color: #bbb;
-     border-color: var(--color-borde);
-   }
-
-   /* Botones de accion para registrar tiros */
-   .tiros-botones {
-     display: flex;
-     gap: 6px;
-     flex-wrap: wrap;
-   }
-
-   .btn-verde {
-     background: var(--color-verde) !important;
-     color: #fff !important;
-     border-color: var(--color-verde-oscuro) !important;
-   }
-
-   .btn-verde:hover {
-     background: var(--color-verde-oscuro) !important;
-   }
-
-   .btn-rojo {
-     background: var(--color-rojo) !important;
-     color: #fff !important;
-     border-color: #922b21 !important;
-   }
-
-   .btn-rojo:hover {
-     background: #922b21 !important;
-   }
-
-   .btn-amarillo {
-     background: var(--color-amarillo) !important;
-     color: #333 !important;
-     border-color: #d4ac0d !important;
-   }
-
-   .btn-amarillo:hover {
-     background: #d4ac0d !important;
-   }
-
-   /* Pie del modulo de penales */
-   .penales-acciones-pie {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     flex-wrap: wrap;
-     gap: 10px;
-     margin-top: 14px;
-     padding-top: 12px;
-     border-top: 1px solid #e8d5a0;
-   }
+    /* //HOJA DE ESTILOS PRINCIPAL - PLANILLERO DEPORTIVO */
+
+    :root {
+      /* Tipografia y textos */
+      --color-texto: #162621;
+      --color-texto-secundario: #5e6f68;
+
+      /* Fondos y superficies */
+      --color-fondo: #f4f6f0;
+      --color-blanco: #ffffff;
+
+      /* Identidad deportiva institucional */
+      --color-verde: #176b50;
+      --color-verde-oscuro: #0e4936;
+      --color-lima: #d5ef63;
+
+      /* Separadores y bordes */
+      --color-borde: #d2ddd5;
+
+      /* Alertas, tarjetas y estados */
+      --color-rojo: #c0392b;
+      --color-amarillo: #f1c40f;
+
+      /* Elevaciones */
+      --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --------------------------------------------------------------------------
+    2. REINICIO Y ESTILOS BASE DEL DOCUMENTO
+    -------------------------------------------------------------------------- */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--color-fondo);
+      color: var(--color-texto);
+      line-height: 1.45;
+    }
+
+    /* --------------------------------------------------------------------------
+    3. CONTENEDORES Y ESTRUCTURA GENERAL
+    -------------------------------------------------------------------------- */
+    .contenedor {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* --------------------------------------------------------------------------
+    4. ENCABEZADO Y NAVEGACION
+    -------------------------------------------------------------------------- */
+    .header-top {
+      background-color: var(--color-verde-oscuro);
+      color: #cdecd8;
+      font-size: 0.8rem;
+      padding: 6px 0;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .header-main {
+      background-color: var(--color-verde);
+      color: var(--color-blanco);
+      border-bottom: 3px solid var(--color-lima);
+      padding: 12px 0;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--color-blanco);
+    }
+
+    .marca img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .marca-tit {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .marca-tit span {
+      color: var(--color-lima);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #e4f4ea;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.activo {
+      background-color: rgba(255, 255, 255, 0.18);
+      color: var(--color-blanco);
+    }
+
+    .nav-links .admin-link {
+      background-color: #0b3d2c;
+      border: 1px solid var(--color-lima);
+      color: var(--color-lima);
+    }
+
+    /* --------------------------------------------------------------------------
+    5. SECCIONES PRINCIPALES (HERO Y PANELES)
+    -------------------------------------------------------------------------- */
+    .hero {
+      padding: 24px 0 18px;
+      border-bottom: 1px solid var(--color-borde);
+      margin-bottom: 20px;
+    }
+
+    .hero-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--color-verde);
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      font-size: 1.85rem;
+      margin: 4px 0 6px;
+    }
+
+    .hero p {
+      color: var(--color-texto-secundario);
+      font-size: 0.95rem;
+    }
+
+    .panel {
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin-bottom: 10px;
+      color: var(--color-verde-oscuro);
+      font-size: 1.25rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel-pagos-arbitraje,
+    .pago-equipo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .pago-equipo span:last-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .equipos-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      align-items: start;
+      gap: 10px;
+    }
+
+    .equipo-admin-card {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      background: #fbfcfa;
+    }
+
+    .equipo-admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .equipo-admin-header small {
+      display: block;
+      color: var(--color-texto-secundario);
+    }
+
+    .equipo-admin-integrantes {
+      display: grid;
+      gap: 4px;
+      list-style: none;
+      margin: 8px 0;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    .equipo-admin-integrantes li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+      font-size: 0.88rem;
+    }
+
+    .equipo-admin-integrantes li span {
+      overflow-wrap: anywhere;
+    }
+
+    .equipo-admin-integrantes .btn {
+      flex-shrink: 0;
+      min-height: 28px;
+      padding: 3px 9px;
+    }
+
+    .equipo-agregar-jugador summary {
+      color: var(--color-verde);
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .equipo-eliminar {
+      margin-top: 10px;
+    }
+
+    .jugador-rapido-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 72px auto;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .jugador-rapido-form input {
+      width: 100%;
+      min-width: 0;
+      min-height: 32px;
+      padding: 4px 7px;
+      border: 1px solid #b7c7be;
+      border-radius: 5px;
+      font: inherit;
+      font-size: 0.84rem;
+    }
+
+    .jugador-rapido-form .btn {
+      min-height: 32px;
+      padding: 4px 8px;
+      font-size: 0.82rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-borde);
+      border-radius: 6px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--color-verde);
+      display: block;
+    }
+
+    .stat-lbl {
+      font-size: 0.8rem;
+      color: var(--color-texto-secundario);
+      text-transform: uppercase;
+    }
+
+    /* --------------------------------------------------------------------------
+    6. FORMULARIOS Y CAMPOS DE ENTRADA
+    -------------------------------------------------------------------------- */
+    .form-group {
+      display: grid;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      min-height: 38px;
+      padding: 6px 10px;
+      border: 1px solid #b7c7be;
+      border-radius: 5px;
+      font: inherit;
+      background-color: var(--color-blanco);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: 2px solid var(--color-verde);
+    }
+
+    /* --------------------------------------------------------------------------
+    7. BOTONES E INTERACTIVOS
+    -------------------------------------------------------------------------- */
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 6px 14px;
+      border: 0;
+      border-radius: 5px;
+      background-color: var(--color-verde);
+      color: var(--color-blanco);
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--color-verde-oscuro);
+    }
+
+    .btn-sm {
+      min-height: 30px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn-out {
+      background-color: transparent;
+      border: 1px solid var(--color-verde);
+      color: var(--color-verde);
+    }
+
+    .btn-out:hover {
+      background-color: #eaf3ed;
+    }
+
+    .btn-red {
+      background-color: var(--color-rojo);
+    }
+
+    .btn-red:hover {
+      background-color: #962d22;
+    }
+
+    /* --------------------------------------------------------------------------
+    8. TABLAS DE DATOS
+    -------------------------------------------------------------------------- */
+    .tabla-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-borde);
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #e7ede8;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #e9f1eb;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      color: #2e473b;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fbfcfa;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f7f2;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .resultado-partido {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .resultado-partido strong {
+      color: var(--color-verde-oscuro);
+      white-space: nowrap;
+    }
+
+    .resultado-penales,
+    .registro-penales {
+      display: block;
+      color: #7d6608;
+      font-weight: 800;
+    }
+
+    .registro-partido {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-borde);
+    }
+
+    .registro-partido:last-child {
+      border-bottom: 0;
+    }
+
+    .registro-partido-info {
+      display: grid;
+      min-width: 0;
+      gap: 4px;
+    }
+
+    .registro-partido-marcador {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .registro-partido-marcador span {
+      color: var(--color-verde-oscuro);
+      font-size: 1.1rem;
+      white-space: nowrap;
+    }
+
+    .registro-partido-meta {
+      color: var(--color-texto-secundario);
+    }
+
+    .registro-pagos-arbitraje {
+      display: block;
+      color: var(--color-texto-secundario);
+      margin-top: 4px;
+    }
+
+    .registro-partido-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--color-texto-secundario);
+      padding: 18px;
+    }
+
+    /* --------------------------------------------------------------------------
+    9. ETIQUETAS, BADGES Y AMONESTACIONES
+    -------------------------------------------------------------------------- */
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .tag-prog {
+      background-color: #fef5d1;
+      color: #7d6608;
+    }
+
+    .tag-juego {
+      background-color: #d4efdf;
+      color: #196f3d;
+    }
+
+    .tag-fin {
+      background-color: #eaeded;
+      color: #5d6d7e;
+    }
+
+    .tag-desc {
+      background-color: #d6eaf8;
+      color: #21618c;
+    }
+
+    .badge-tarj {
+      display: inline-block;
+      width: 14px;
+      height: 18px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+
+    .badge-tarj.amarilla {
+      background-color: var(--color-amarillo);
+      border: 1px solid #d4ac0d;
+    }
+
+    .badge-tarj.roja {
+      background-color: var(--color-rojo);
+      border: 1px solid #962d22;
+    }
+
+    .badge-cap {
+      background-color: #fdf3d8;
+      color: #8d6b05;
+      border: 1px solid #f9e79f;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    /* --------------------------------------------------------------------------
+    10. PLANILLA EN VIVO, MARCADOR Y CRONOMETRO
+    -------------------------------------------------------------------------- */
+    .marcador {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+      background-color: #0f241c;
+      color: var(--color-blanco);
+      padding: 18px;
+      border-radius: 8px;
+      margin: 14px 0;
+    }
+
+    .marcador-nombre {
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    .marcador-goles {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--color-lima);
+      font-family: ui-monospace, Consolas, monospace;
+    }
+
+    .reloj-box {
+      background-color: #132a21;
+      border-radius: 6px;
+      padding: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+      border-top: 2px solid #235442;
+    }
+
+    .reloj-num {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--color-lima);
+      font-family: ui-monospace, Consolas, monospace;
+      letter-spacing: 2px;
+    }
+
+    .reloj-tit {
+      font-size: 0.85rem;
+      color: #ffffff;
+      text-transform: uppercase;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .lista-eventos {
+      list-style: none;
+    }
+
+    .lista-eventos li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-borde);
+      font-size: 0.86rem;
+    }
+
+    /* --------------------------------------------------------------------------
+    11. PESTANAS DE NAVEGACION
+    -------------------------------------------------------------------------- */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 2px solid var(--color-borde);
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: 0;
+      padding: 8px 16px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-texto-secundario);
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .tab-btn.activo {
+      color: var(--color-verde);
+      border-bottom: 3px solid var(--color-verde);
+      background-color: var(--color-blanco);
+    }
+
+    /* --------------------------------------------------------------------------
+    12. AVISOS Y MENSAJES DE ALERTA
+    -------------------------------------------------------------------------- */
+    .aviso {
+      padding: 10px 14px;
+      border-left: 4px solid var(--color-verde);
+      background-color: #e8f3ea;
+      margin-bottom: 14px;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.88rem;
+    }
+
+    .aviso-error {
+      border-color: var(--color-rojo);
+      background-color: #fdeee9;
+      color: var(--color-rojo);
+    }
+
+    .aviso-ok {
+      border-color: var(--color-verde);
+      background-color: #e8f4ed;
+      color: var(--color-verde-oscuro);
+    }
+
+    /* --------------------------------------------------------------------------
+    13. PIE DE PAGINA (FOOTER)
+    -------------------------------------------------------------------------- */
+    footer {
+      background-color: var(--color-verde-oscuro);
+      color: #cdecd8;
+      text-align: center;
+      padding: 18px 0;
+      font-size: 0.82rem;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: var(--color-lima);
+      text-decoration: none;
+      margin: 0 6px;
+    }
+
+    /* --------------------------------------------------------------------------
+    15. TARJETAS DE PARTIDOS PROGRAMADOS
+    -------------------------------------------------------------------------- */
+    .partido-card {
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .partido-card:hover {
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .partido-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .partido-card-equipos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.05rem;
+      padding: 6px 0;
+    }
+
+    .partido-card-vs {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--color-verde);
+      font-family: ui-monospace, Consolas, monospace;
+    }
+
+    .partido-card-meta {
+      text-align: center;
+      color: var(--color-texto-secundario);
+      margin-bottom: 8px;
+    }
+
+    .partido-card-acciones {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* --------------------------------------------------------------------------
+    16. PLANTEL DE EQUIPO (LISTA DE JUGADORES CON SUSPENSIONES)
+    -------------------------------------------------------------------------- */
+    .plantel-contenedor {
+      border: 1px solid var(--color-borde);
+      border-radius: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .plantel-lista {
+      padding: 0;
+    }
+
+    .plantel-jugador {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      border-bottom: 1px solid #eef1ee;
+      font-size: 0.84rem;
+      transition: background-color 0.1s ease;
+    }
+
+    .plantel-jugador:last-child {
+      border-bottom: 0;
+    }
+
+    .plantel-jugador:hover {
+      background-color: #f6f9f6;
+    }
+
+    .plantel-suspendido {
+      background-color: #fef0ed !important;
+      color: var(--color-rojo);
+      font-weight: 700;
+    }
+
+    .plantel-suspendido:hover {
+      background-color: #fde5df !important;
+    }
+
+    .plantel-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-suspension {
+      background-color: var(--color-rojo);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .plantel-tarjetas {
+      display: flex;
+      gap: 4px;
+    }
+
+    .badge-mini-tarj {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 16px;
+      border-radius: 2px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .badge-mini-tarj.amarilla {
+      background-color: var(--color-amarillo);
+      color: #7d6608;
+    }
+
+    .badge-mini-tarj.roja {
+      background-color: var(--color-rojo);
+    }
+
+    /* --------------------------------------------------------------------------
+    17. MEJORAS VISUALES A LA PLANILLA EN VIVO
+    -------------------------------------------------------------------------- */
+    .panel-programar {
+      border-left: 4px solid var(--color-verde);
+    }
+
+    .programar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .planilla-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .panel-planilla-vivo {
+      border: 2px solid var(--color-verde);
+      border-radius: 10px;
+    }
+
+    .panel-arbitraje {
+      background: #f9fbf9;
+      border: 1px solid var(--color-borde);
+      border-radius: 6px;
+      margin-bottom: 14px;
+      padding: 12px;
+    }
+
+    .panel-pagos-arbitraje {
+      background: #f9fbf9;
+      border: 1px solid var(--color-borde);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .panel-incidencia {
+      margin: 0;
+      background: #fbfdfb;
+    }
+
+    .reloj-controles {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Marcador y Ajustes de Goles ── */
+    .marcador-equipo-lado {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .marcador-etiqueta-lado {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #a8c5b9;
+    }
+
+    .marcador-centro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .marcador-separador {
+      margin: 0 4px;
+      opacity: 0.6;
+    }
+
+    .marcador-subtitulo {
+      color: #a8c5b9;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+    }
+
+    .marcador-ajustes {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-gol-ajuste {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-gol-ajuste:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-gol-ajuste.mas {
+      background: var(--color-verde);
+      border-color: var(--color-lima);
+      color: var(--color-lima);
+    }
+
+    .btn-gol-ajuste.mas:hover {
+      background: var(--color-verde-oscuro);
+    }
+
+    .btn-gol-ajuste.menos {
+      background: rgba(192, 57, 43, 0.4);
+      border-color: var(--color-rojo);
+      color: #ffb3ba;
+    }
+
+    .btn-gol-ajuste.menos:hover {
+      background: var(--color-rojo);
+      color: #ffffff;
+    }
+
+    /* ── Paneles de Incidencias por Equipo (Cero confusión) ── */
+    .panel-lado-local {
+      border-top: 4px solid var(--color-verde);
+      background: #f7faf7;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #dce8dd;
+    }
+
+    .panel-lado-visita {
+      border-top: 4px solid #2980b9;
+      background: #f4f8fb;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #d4e3ee;
+    }
+
+    .panel-lado-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .badge-lado {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-lado.local {
+      background: #e8f5e9;
+      color: var(--color-verde-oscuro);
+      border: 1px solid var(--color-verde);
+    }
+
+    .badge-lado.visita {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+    }
+
+    .select-jugador {
+      width: 100%;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 8px 10px;
+    }
+
+    .incidencia-acciones {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-incidencia {
+      width: 100%;
+      font-weight: 800;
+      padding: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .btn-inc-gol {
+      background: var(--color-verde);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn-inc-gol:hover {
+      background: var(--color-verde-oscuro);
+    }
+
+    .incidencia-tarjetas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-amarillo {
+      background: var(--color-amarillo);
+      color: #614a00;
+      border: 1px solid #d4ac0d;
+      font-weight: 700;
+    }
+
+    .btn-amarillo:hover {
+      background: #f4d03f;
+    }
+
+    .btn-rojo {
+      background: var(--color-rojo);
+      color: #ffffff;
+      border: 1px solid #a93226;
+      font-weight: 700;
+    }
+
+    .btn-rojo:hover {
+      background: #a93226;
+    }
+
+    .badge-stat-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #e9ecef;
+      color: #495057;
+    }
+
+    /* ── Modulo de Definicion por Penales (5 Tiros) ── */
+    .panel-penales {
+      background: #11261d;
+      color: #ffffff;
+      border: 2px solid var(--color-lima);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 16px;
+    }
+
+    .penales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 10px;
+    }
+
+    .badge-penales {
+      background: var(--color-lima);
+      color: #0f241c;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .penales-marcador-global {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--color-lima);
+      font-family: ui-monospace, Consolas, monospace;
+    }
+
+    .panel-tiros-equipo {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .tiros-equipo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .badge-tiros-total {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--color-lima);
+    }
+
+    .tiros-indicadores {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .tiro-slot {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 38px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .tiro-slot.gol {
+      background: var(--color-verde);
+      border-color: var(--color-lima);
+      color: var(--color-lima);
+    }
+
+    .tiro-slot.fallo {
+      background: rgba(192, 57, 43, 0.6);
+      border-color: var(--color-rojo);
+      color: #ffffff;
+    }
+
+    .tiro-slot.pendiente {
+      background: rgba(255, 255, 255, 0.05);
+      color: #8fa39a;
+    }
+
+    .tiros-botones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .penales-acciones-pie {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* --------------------------------------------------------------------------
+    18. REGLAS RESPONSIVAS (MEDIA QUERIES)
+    -------------------------------------------------------------------------- */
+    @media (max-width: 768px) {
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .marcador {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .marcador-goles {
+        font-size: 2.3rem;
+      }
+
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+
+      .partido-card-equipos {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .tabla-wrap {
+        margin-left: -6px;
+        margin-right: -6px;
+        max-width: calc(100% + 12px);
+      }
+
+      table {
+        font-size: 0.82rem;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      .tabla-partidos thead {
+        display: none;
+      }
+
+      .tabla-partidos,
+      .tabla-partidos tbody,
+      .tabla-partidos tr,
+      .tabla-partidos td {
+        display: block;
+        width: 100%;
+      }
+
+      .tabla-partidos tbody tr {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--color-borde);
+      }
+
+      .tabla-partidos tbody tr:last-child {
+        border-bottom: 0;
+      }
+
+      .tabla-partidos td {
+        display: grid;
+        grid-template-columns: minmax(100px, 34%) minmax(0, 1fr);
+        gap: 8px;
+        padding: 5px 0;
+        border: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .tabla-partidos td::before {
+        content: attr(data-label);
+        color: var(--color-texto-secundario);
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .tabla-partidos td.empty {
+        display: block;
+        text-align: center;
+      }
+
+      .tabla-partidos td.empty::before {
+        content: none;
+      }
+
+      .tabla-partidos .resultado-partido {
+        gap: 4px;
+      }
+
+      .registro-partido {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .registro-partido-acciones {
+        justify-content: flex-start;
+      }
+    }
+
+    /* ────────────────────────────────────────────────────────────────────────────
+        MODULO DE PENALES Y TIEMPO EXTRA
+    ──────────────────────────────────────────────────────────────────────────── */
+
+    /* Panel contenedor de la tanda de penales */
+    .panel-penales {
+      background: linear-gradient(135deg, #fef9e7 0%, #fdf2d5 100%);
+      border: 2px solid #f0c75e;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .penales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .badge-penales {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .penales-marcador-global {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--color-verde-oscuro);
+      letter-spacing: 2px;
+    }
+
+    /* Panel de tiros por equipo */
+    .panel-tiros-equipo {
+      background: var(--color-blanco);
+      border: 1px solid var(--color-borde);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .tiros-equipo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge-tiros-total {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: var(--color-verde);
+      color: #fff;
+    }
+
+    /* Indicadores visuales de cada tiro (circulo con estado) */
+    .tiros-indicadores {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      min-height: 36px;
+    }
+
+    .tiro-slot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      border: 2px solid var(--color-borde);
+      background: #f9f9f9;
+      color: #999;
+      transition: all 0.2s ease;
+    }
+
+    .tiro-slot.tiro-gol {
+      background: var(--color-verde);
+      color: #fff;
+      border-color: var(--color-verde-oscuro);
+    }
+
+    .tiro-slot.tiro-fallo {
+      background: var(--color-rojo);
+      color: #fff;
+      border-color: #922b21;
+    }
+
+    .tiro-slot.tiro-pendiente {
+      background: #f9f9f9;
+      color: #bbb;
+      border-color: var(--color-borde);
+    }
+
+    /* Botones de accion para registrar tiros */
+    .tiros-botones {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-verde {
+      background: var(--color-verde) !important;
+      color: #fff !important;
+      border-color: var(--color-verde-oscuro) !important;
+    }
+
+    .btn-verde:hover {
+      background: var(--color-verde-oscuro) !important;
+    }
+
+    .btn-rojo {
+      background: var(--color-rojo) !important;
+      color: #fff !important;
+      border-color: #922b21 !important;
+    }
+
+    .btn-rojo:hover {
+      background: #922b21 !important;
+    }
+
+    .btn-amarillo {
+      background: var(--color-amarillo) !important;
+      color: #333 !important;
+      border-color: #d4ac0d !important;
+    }
+
+    .btn-amarillo:hover {
+      background: #d4ac0d !important;
+    }
+
+    /* Pie del modulo de penales */
+    .penales-acciones-pie {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e8d5a0;
+    }

@@ -154,10 +154,10 @@ export async function iniciarSanciones() {
       const match = matches[sanction.partido_id];
       const game = match ? `${teams[match.equipo_local_id]} vs ${teams[match.equipo_visitante_id]}` : 'Partido';
       const adminControls = admin ? `
-        <td><div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
-          <input type="number" min="0" step="1" value="${Number(sanction.monto)}" data-monto-sancion="${sanction.id}" style="width:60px;padding:2px">
-          <button class="btn btn-sm btn-out" data-guardar-monto="${sanction.id}">Fijar</button>
-          <button class="btn btn-sm ${sanction.pagada ? 'btn-out' : ''}" data-pago="${sanction.id}" data-val="${!sanction.pagada}">${sanction.pagada ? 'Pendiente' : 'Marcar Pagada'}</button>
+        <td><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label style="display:inline-flex;align-items:center;gap:6px;font-weight:700;cursor:pointer">
+            <input type="checkbox" data-pago="${sanction.id}" data-val="${!sanction.pagada}" ${sanction.pagada ? 'checked' : ''}> Pagó
+          </label>
           <button class="btn btn-sm btn-red" data-estado="${sanction.id}" data-val="suspendida">Suspender</button>
           <button class="btn btn-sm btn-out" data-estado="${sanction.id}" data-val="retirada">Retirar</button>
         </div></td>` : '';
@@ -165,29 +165,21 @@ export async function iniciarSanciones() {
         <td><strong>${esc(player?.nombre)}</strong> ${player?.dorsal ? `(#${player.dorsal})` : ''}</td>
         <td>${esc(teams[player?.equipo_id] || '-')}</td>
         <td><span class="badge-tarj ${sanction.tarjeta}"></span> <strong>[${esc(sanction.tarjeta.toUpperCase())}]</strong></td>
-        <td><small>${esc(game)}</small></td><td>Bs. ${Number(sanction.monto).toFixed(2)}</td>
-        <td><strong>${sanction.pagada ? 'Pagada' : 'Pendiente'}</strong></td>
+        <td><small>${esc(game)}</small></td>
+        <td><strong>${sanction.pagada ? 'Sí' : 'No'}</strong></td>
         <td><span class="tag tag-${sanction.estado === 'suspendida' ? 'juego' : 'prog'}">${esc(sanction.estado)}</span></td>
         ${adminControls}</tr>`;
-    }).join('') : '<tr><td colspan="8" class="empty">No hay sanciones registradas.</td></tr>';
+    }).join('') : '<tr><td colspan="7" class="empty">No hay sanciones registradas.</td></tr>';
 
     if (admin) {
       document.getElementById('th-admin-sanciones')?.removeAttribute('hidden');
-      // Cambia el pago y el estado disciplinario asociado a la sanción.
-      tbody.querySelectorAll('[data-pago]').forEach((button) => button.addEventListener('click', async () => {
-        const paid = button.dataset.val === 'true';
-        await actualizar('sanciones', button.dataset.pago, { pagada: paid, estado: paid ? 'cumplida' : 'pendiente' });
+      tbody.querySelectorAll('[data-pago]').forEach((checkbox) => checkbox.addEventListener('change', async () => {
+        const paid = checkbox.checked;
+        await actualizar('sanciones', checkbox.dataset.pago, { pagada: paid, estado: paid ? 'cumplida' : 'pendiente' });
         iniciarSanciones();
       }));
-      // Aplica el estado disciplinario solicitado por el administrador.
       tbody.querySelectorAll('[data-estado]').forEach((button) => button.addEventListener('click', async () => {
         await actualizar('sanciones', button.dataset.estado, { estado: button.dataset.val });
-        iniciarSanciones();
-      }));
-      // Guarda el monto de multa editado para esta sanción.
-      tbody.querySelectorAll('[data-guardar-monto]').forEach((button) => button.addEventListener('click', async () => {
-        const input = tbody.querySelector(`[data-monto-sancion="${button.dataset.guardarMonto}"]`);
-        await actualizar('sanciones', button.dataset.guardarMonto, { monto: Number(input.value || 0) });
         iniciarSanciones();
       }));
     }

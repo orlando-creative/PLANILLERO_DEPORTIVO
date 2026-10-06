@@ -1,12 +1,12 @@
 import {
   leer, guardar, actualizar, borrar, reiniciarCampeonato,
-  obtenerFinanzas, esAdmin
+  esAdmin
 } from './supabase.js';
 import {
   esc, fmtFecha, fmtReloj, avisar, montarNavegacion
 } from './app.js';
 import {
-  crearModuloFinanzas, crearModuloGestion, crearModuloPenales, renderizarReloj
+  crearModuloGestion, crearModuloPenales, renderizarReloj
 } from './app-modulos.js';
 
 // Inicializa el panel privado y coordina la planilla, el reloj y sus módulos auxiliares.
@@ -20,7 +20,6 @@ export async function iniciarAdmin() {
   let jugadores = [];
   let partidos = [];
   let sanciones = [];
-  let finanzasCfg = {};
   let pActivo = null;
   let eventos = [];
   let ticker = null;
@@ -37,28 +36,22 @@ export async function iniciarAdmin() {
   });
   // Recarga los datos compartidos y vuelve a pintar las vistas del panel.
   const cargar = async () => {
-    [equipos, jugadores, partidos, sanciones, finanzasCfg] = await Promise.all([
+    [equipos, jugadores, partidos, sanciones] = await Promise.all([
       leer('equipos'),
       leer('jugadores'),
       leer('partidos', 'fecha_hora'),
-      leer('sanciones'),
-      obtenerFinanzas()
+      leer('sanciones')
     ]);
     gestion.poblarSelects();
     gestion.renderRegistro();
-    finanzas.render();
+    gestion.renderEquipos();
     if (pActivo) {
       const up = partidos.find((p) => p.id === pActivo.id);
       if (up) abrirPlanilla(up.id, false);
     }
   };
-  const finanzas = crearModuloFinanzas({
-    datos: () => ({ equipos, partidos, sanciones, finanzasCfg }),
-    cargar,
-    actualizarFinanzas: (configuracion) => { finanzasCfg = configuracion; }
-  });
   const gestion = crearModuloGestion({
-    datos: () => ({ equipos, jugadores, partidos, sanciones, finanzasCfg, partidoActivo: pActivo }),
+    datos: () => ({ equipos, jugadores, partidos, sanciones, partidoActivo: pActivo }),
     cargar,
     abrirPlanilla: (...args) => abrirPlanilla(...args),
     cerrarPlanilla: () => {
@@ -188,14 +181,12 @@ export async function iniciarAdmin() {
     document.getElementById('mar-gol-visita').textContent = pActivo.goles_visitante;
     document.getElementById('mar-cap-local').textContent = capLoc ? `(C) ${capLoc.nombre}` : 'Sin capitán';
     document.getElementById('mar-cap-visita').textContent = capVis ? `(C) ${capVis.nombre}` : 'Sin capitán';
+    document.getElementById('pago-arbitraje-nombre-local').textContent = nomLoc;
+    document.getElementById('pago-arbitraje-nombre-visita').textContent = nomVis;
+    document.getElementById('chk-arbitraje-local').checked = Boolean(pActivo.arbitraje_local_pagado);
+    document.getElementById('chk-arbitraje-visita').checked = Boolean(pActivo.arbitraje_visitante_pagado);
     document.getElementById('meta-partido-texto').textContent =
       `${pActivo.fase} · ${pActivo.categoria} (${pActivo.genero}) · ${fmtFecha(pActivo.fecha_hora)}`;
-    const arbChk = document.getElementById('chk-arbitraje-pagado');
-    if (arbChk) {
-      arbChk.checked = Boolean(pActivo.arbitraje_pagado);
-      document.getElementById('txt-costo-arbitraje-partido').textContent =
-        Number(pActivo.costo_arbitraje || 0).toFixed(2);
-    }
     const sJugLoc = document.getElementById('s-jugador-local');
     if (sJugLoc) {
       const jugLoc = jugadores.filter((j) => j.equipo_id === pActivo.equipo_local_id);
@@ -289,13 +280,12 @@ export async function iniciarAdmin() {
     partidos = await leer('partidos', 'fecha_hora');
     await abrirPlanilla(pActivo.id, false);
     gestion.renderRegistro();
-    finanzas.render();
 
     const eqNombre = equipos.find((e) => e.id === equipoId)?.nombre || 'Equipo';
     const tipoTexto = tipo === 'gol' ? '¡Gol registrado!' : tipo === 'amarilla' ? 'Tarjeta amarilla registrada' : 'Tarjeta roja registrada';
     avisar('aviso-admin', `${tipoTexto} para ${eqNombre}.`);
   };
-  // Elimina una incidencia confirmada y vuelve a cargar marcador, sanciones y finanzas.
+  // Elimina una incidencia confirmada y vuelve a cargar marcador y sanciones.
   const eliminarIncidencia = async (eventoId) => {
     if (!confirm('¿Deseas eliminar esta incidencia? Si es un gol, el marcador se actualizará automáticamente.')) return;
     await borrar('eventos_partido', eventoId);
@@ -304,7 +294,6 @@ export async function iniciarAdmin() {
     partidos = await leer('partidos', 'fecha_hora');
     await abrirPlanilla(pActivo.id, false);
     gestion.renderRegistro();
-    finanzas.render();
     avisar('aviso-admin', 'Incidencia eliminada y marcador actualizado.');
   };
   // Deshace el gol más reciente del equipo mediante el flujo normal de eliminación.
@@ -373,16 +362,6 @@ export async function iniciarAdmin() {
   document.getElementById('btn-gol-visita-menos')?.addEventListener('click', () => {
     if (!pActivo) return;
     restarUltimoGolEquipo(pActivo.equipo_visitante_id);
-  });
-  // Actualiza el estado de pago del arbitraje del partido abierto.
-  document.getElementById('chk-arbitraje-pagado')?.addEventListener('change', async (e) => {
-    if (!pActivo) return;
-    const pagado = e.target.checked;
-    await actualizar('partidos', pActivo.id, { arbitraje_pagado: pagado });
-    pActivo.arbitraje_pagado = pagado;
-    partidos = await leer('partidos', 'fecha_hora');
-    gestion.renderRegistro();
-    finanzas.render();
   });
   // Controladores del cronómetro: iniciar, pausar, avanzar y cerrar periodos.
   document.getElementById('btn-reloj-ini')?.addEventListener('click', async () => {
@@ -456,7 +435,6 @@ export async function iniciarAdmin() {
     pActivo.estado = 'finalizado';
     partidos = await leer('partidos', 'fecha_hora');
     gestion.renderRegistro();
-    finanzas.render();
     renderReloj();
     avisar('aviso-admin', 'Partido finalizado oficialmente.');
   });
@@ -490,6 +468,26 @@ export async function iniciarAdmin() {
   // Atajo para regresar desde la planilla a la lista de partidos.
   document.getElementById('btn-ir-registro')?.addEventListener('click', () => {
     document.querySelector('[data-tab="sec-registro"]')?.click();
+  });
+  [['local', 'chk-arbitraje-local', 'arbitraje_local_pagado'],
+    ['visitante', 'chk-arbitraje-visita', 'arbitraje_visitante_pagado']].forEach(([lado, id, campo]) => {
+    const checkbox = document.getElementById(id);
+    checkbox?.addEventListener('change', async () => {
+      if (!pActivo) return;
+      const paid = checkbox.checked;
+      checkbox.disabled = true;
+      try {
+        await actualizar('partidos', pActivo.id, { [campo]: paid });
+        pActivo[campo] = paid;
+        gestion.renderRegistro();
+        avisar('aviso-admin', `Arbitraje ${lado}: ${paid ? 'pagado' : 'pendiente'}.`);
+      } catch (error) {
+        checkbox.checked = Boolean(pActivo[campo]);
+        avisar('aviso-admin', `No se pudo actualizar el pago del arbitraje: ${error.message}`, true);
+      } finally {
+        checkbox.disabled = false;
+      }
+    });
   });
   // Reinicia los partidos solo después de pedir confirmación explícita al administrador.
   document.getElementById('btn-reiniciar-campeonato')?.addEventListener('click', async () => {
