@@ -94,13 +94,20 @@ export async function iniciarIndex() {
       const visible = (row) => (!cat || row.categoria === cat) && (!gen || row.genero === gen);
       const filteredMatches = partidos.filter(visible);
       document.getElementById('tbody-partidos').innerHTML = filteredMatches.length
-        ? filteredMatches.map((match) => `
+        ? filteredMatches.map((match) => {
+          const penales = match.penales_local != null && match.penales_visitante != null
+            ? `<small class="resultado-penales">Penales: ${match.penales_local} - ${match.penales_visitante}</small>` : '';
+          return `
           <tr>
-            <td>${fmtFecha(match.fecha_hora)}</td><td><strong>${esc(match.fase)}</strong></td>
-            <td>${esc(names[match.equipo_local_id])} <strong>${match.goles_local} - ${match.goles_visitante}</strong> ${esc(names[match.equipo_visitante_id])}</td>
-            <td>${esc(match.categoria)} (${esc(match.genero)})</td>
-            <td><span class="tag tag-${match.estado === 'en_juego' ? 'juego' : match.estado === 'finalizado' ? 'fin' : 'prog'}">${esc(match.estado.replace('_', ' '))}</span></td>
-          </tr>`).join('')
+            <td data-label="Fecha y Hora">${fmtFecha(match.fecha_hora)}</td>
+            <td data-label="Fase"><strong>${esc(match.fase)}</strong></td>
+            <td data-label="Partido y Resultado"><span class="resultado-partido">${esc(names[match.equipo_local_id])}
+              <strong>${match.goles_local} - ${match.goles_visitante}</strong>
+              ${esc(names[match.equipo_visitante_id])}</span>${penales}</td>
+            <td data-label="Categoría / Rama">${esc(match.categoria)} (${esc(match.genero)})</td>
+            <td data-label="Estado"><span class="tag tag-${match.estado === 'en_juego' ? 'juego' : match.estado === 'finalizado' ? 'fin' : 'prog'}">${esc(match.estado.replace('_', ' '))}</span></td>
+          </tr>`;
+        }).join('')
         : '<tr><td colspan="5" class="empty">No hay partidos con los filtros seleccionados.</td></tr>';
 
       const standings = posiciones.filter(visible)

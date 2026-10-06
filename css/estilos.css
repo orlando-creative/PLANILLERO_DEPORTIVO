@@ -293,6 +293,7 @@
    -------------------------------------------------------------------------- */
    .tabla-wrap {
      overflow-x: auto;
+     -webkit-overflow-scrolling: touch;
      background-color: var(--color-blanco);
      border: 1px solid var(--color-borde);
      border-radius: 6px;
@@ -301,6 +302,7 @@
    table {
      width: 100%;
      border-collapse: collapse;
+     table-layout: auto;
      font-size: 0.88rem;
      text-align: left;
    }
@@ -309,6 +311,7 @@
    td {
      padding: 9px 12px;
      border-bottom: 1px solid #e7ede8;
+     vertical-align: middle;
      white-space: nowrap;
    }
 
@@ -317,10 +320,83 @@
      font-size: 0.76rem;
      text-transform: uppercase;
      color: #2e473b;
+     text-align: left;
+   }
+
+   tbody tr:nth-child(even) {
+     background-color: #fbfcfa;
+   }
+
+   tbody tr:hover {
+     background-color: #f1f7f2;
    }
 
    tr:last-child td {
      border-bottom: 0;
+   }
+
+   .resultado-partido {
+     display: inline-flex;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 5px;
+   }
+
+   .resultado-partido strong {
+     color: var(--color-verde-oscuro);
+     white-space: nowrap;
+   }
+
+   .resultado-penales,
+   .registro-penales {
+     display: block;
+     color: #7d6608;
+     font-weight: 800;
+   }
+
+   .registro-partido {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     gap: 14px;
+     padding: 14px 0;
+     border-bottom: 1px solid var(--color-borde);
+   }
+
+   .registro-partido:last-child {
+     border-bottom: 0;
+   }
+
+   .registro-partido-info {
+     display: grid;
+     min-width: 0;
+     gap: 4px;
+   }
+
+   .registro-partido-marcador {
+     display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     gap: 8px;
+   }
+
+   .registro-partido-marcador span {
+     color: var(--color-verde-oscuro);
+     font-size: 1.1rem;
+     white-space: nowrap;
+   }
+
+   .registro-partido-meta {
+     color: var(--color-texto-secundario);
+   }
+
+   .registro-partido-acciones {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: flex-end;
+     align-items: center;
+     gap: 6px;
+     flex-shrink: 0;
    }
 
    .empty {
@@ -1054,6 +1130,83 @@
      .partido-card-equipos {
        flex-direction: column;
        gap: 4px;
+     }
+
+     .tabla-wrap {
+       margin-left: -6px;
+       margin-right: -6px;
+       max-width: calc(100% + 12px);
+     }
+
+     table {
+       font-size: 0.82rem;
+     }
+
+     th,
+     td {
+       padding: 8px;
+     }
+
+     .tabla-partidos thead {
+       display: none;
+     }
+
+     .tabla-partidos,
+     .tabla-partidos tbody,
+     .tabla-partidos tr,
+     .tabla-partidos td {
+       display: block;
+       width: 100%;
+     }
+
+     .tabla-partidos tbody tr {
+       padding: 8px 12px;
+       border-bottom: 1px solid var(--color-borde);
+     }
+
+     .tabla-partidos tbody tr:last-child {
+       border-bottom: 0;
+     }
+
+     .tabla-partidos td {
+       display: grid;
+       grid-template-columns: minmax(100px, 34%) minmax(0, 1fr);
+       gap: 8px;
+       padding: 5px 0;
+       border: 0;
+       white-space: normal;
+       overflow-wrap: anywhere;
+     }
+
+     .tabla-partidos td::before {
+       content: attr(data-label);
+       color: var(--color-texto-secundario);
+       font-size: 0.72rem;
+       font-weight: 800;
+       text-transform: uppercase;
+     }
+
+     .tabla-partidos td.empty {
+       display: block;
+       text-align: center;
+     }
+
+     .tabla-partidos td.empty::before {
+       content: none;
+     }
+
+     .tabla-partidos .resultado-partido {
+       gap: 4px;
+     }
+
+     .registro-partido {
+       align-items: stretch;
+       flex-direction: column;
+       gap: 10px;
+     }
+
+     .registro-partido-acciones {
+       justify-content: flex-start;
      }
    }
 

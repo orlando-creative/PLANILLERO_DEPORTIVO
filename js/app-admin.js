@@ -24,7 +24,7 @@ export async function iniciarAdmin() {
   let pActivo = null;
   let eventos = [];
   let ticker = null;
-  let segsBase = 15 * 60;
+  let segsBase = 1 * 60;
   let tInicio = null;
   // Cambia la sección visible al seleccionar una pestaña del panel.
   document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -105,6 +105,8 @@ export async function iniciarAdmin() {
         pActivo.periodo = penalesTrasProrroga ? 4 : pActivo.periodo;
         pActivo.reloj_segundos = 0;
         pActivo.reloj_iniciado_en = null;
+        segsBase = 0;
+        tInicio = null;
         renderReloj();
         if (penalesTrasProrroga) {
           if (await penales.iniciar()) {
@@ -158,7 +160,7 @@ export async function iniciarAdmin() {
       pActivo.goles_visitante = golesVis;
       await actualizar('partidos', pActivo.id, { goles_local: golesLoc, goles_visitante: golesVis });
     }
-    segsBase = pActivo.reloj_segundos ?? 900;
+    segsBase = pActivo.reloj_segundos ?? 60;
     tInicio = pActivo.reloj_iniciado_en;
     if ((pActivo.estado === 'en_juego' || pActivo.estado === 'tiempo_extra') && tInicio) {
       segsBase = Math.max(0, segsBase - Math.floor((Date.now() - new Date(tInicio).getTime()) / 1000));
@@ -272,7 +274,7 @@ export async function iniciarAdmin() {
       const conf = confirm(`ATENCIÓN: El jugador ${jInfo?.nombre || ''} tiene sanción ACTIVA por tarjetas.\n¿Deseas registrar esta incidencia de todas formas?`);
       if (!conf) return;
     }
-    const duracionPeriodo = pActivo.periodo === 3 ? 600 : 900;
+    const duracionPeriodo = pActivo.periodo === 3 ? 60 : 60;
     const segTranscurridos = Math.max(0, duracionPeriodo - segsActuales());
     await guardar('eventos_partido', {
       partido_id: pActivo.id,
@@ -418,14 +420,14 @@ export async function iniciarAdmin() {
       return;
     }
     if (ticker) clearInterval(ticker);
-    segsBase = 900;
+    segsBase = 60;
     tInicio = new Date().toISOString();
     await actualizar('partidos', pActivo.id, {
-      estado: 'en_juego', periodo: 2, reloj_segundos: 900, reloj_iniciado_en: tInicio
+      estado: 'en_juego', periodo: 2, reloj_segundos: 60, reloj_iniciado_en: tInicio
     });
     pActivo.estado = 'en_juego';
     pActivo.periodo = 2;
-    pActivo.reloj_segundos = 900;
+    pActivo.reloj_segundos = 60;
     pActivo.reloj_iniciado_en = tInicio;
     arrancarReloj();
     gestion.renderRegistro();

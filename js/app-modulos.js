@@ -219,15 +219,20 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
       const stateClass = running ? 'juego' : match.estado === 'finalizado' ? 'fin' : match.estado === 'postergado' ? 'desc' : 'prog';
       const stateText = ({ en_juego: 'En Juego', tiempo_extra: 'Tiempo Extra', penales: 'Penales', postergado: 'Postergado' })[match.estado] || match.estado;
       const penalties = match.penales_local != null && match.penales_visitante != null
-        ? ` · Penales: ${match.penales_local} - ${match.penales_visitante}` : '';
-      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--color-borde);flex-wrap:wrap;gap:8px">
-        <div><strong>${esc(names[match.equipo_local_id])} ${match.goles_local} - ${match.goles_visitante} ${esc(names[match.equipo_visitante_id])}</strong>${penalties}
-        <small style="display:block;color:var(--color-texto-secundario)">${esc(match.fase)} · ${esc(match.categoria)} (${esc(match.genero)}) · ${fmtFecha(match.fecha_hora)} · Arbitraje: Bs. ${Number(match.costo_arbitraje || 0).toFixed(2)} (${match.arbitraje_pagado ? 'Pagado' : 'Pendiente'})</small></div>
-        <div style="display:flex;gap:6px;align-items:center"><span class="tag tag-${stateClass}">${esc(stateText)}</span>
+        ? `<small class="registro-penales">Penales: ${match.penales_local} - ${match.penales_visitante}</small>` : '';
+      return `<article class="registro-partido">
+        <div class="registro-partido-info">
+          <strong class="registro-partido-marcador">${esc(names[match.equipo_local_id])}
+            <span>${match.goles_local} - ${match.goles_visitante}</span>
+            ${esc(names[match.equipo_visitante_id])}</strong>
+          ${penalties}
+          <small class="registro-partido-meta">${esc(match.fase)} · ${esc(match.categoria)} (${esc(match.genero)}) · ${fmtFecha(match.fecha_hora)} · Arbitraje: Bs. ${Number(match.costo_arbitraje || 0).toFixed(2)} (${match.arbitraje_pagado ? 'Pagado' : 'Pendiente'})</small>
+        </div>
+        <div class="registro-partido-acciones"><span class="tag tag-${stateClass}">${esc(stateText)}</span>
         <button class="btn btn-sm" data-abrir-reg="${match.id}">Abrir Planilla</button>
         <button class="btn btn-sm btn-out" data-editar-reg="${match.id}">Editar</button>
         <button class="btn btn-sm btn-out" data-postergar-reg="${match.id}" ${running || match.estado === 'finalizado' ? 'disabled' : ''}>Postergar</button>
-        <button class="btn btn-sm btn-red" data-borrar-reg="${match.id}">Eliminar</button></div></div>`;
+        <button class="btn btn-sm btn-red" data-borrar-reg="${match.id}">Eliminar</button></div></article>`;
     }).join('') : '<p class="empty">No hay partidos en el campeonato.</p>';
 
     // Abre la planilla seleccionada y muestra su pestaña.
@@ -296,7 +301,7 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
         capitan_local_id: document.getElementById('s-cap-local').value || null,
         capitan_visitante_id: document.getElementById('s-cap-visita').value || null,
         costo_arbitraje: Number(document.getElementById('partido-arbitraje')?.value || finanzasCfg.costo_arbitraje || 30),
-        arbitraje_pagado: false, reloj_segundos: 900, periodo: 1, estado: 'programado'
+        arbitraje_pagado: false, reloj_segundos: 60, periodo: 1, estado: 'programado'
       });
       document.getElementById('form-partido').reset();
       document.getElementById('plantel-local').innerHTML = '';
