@@ -126,11 +126,6 @@ export async function iniciarIndex() {
       leer('goleadores')
     ]);
 
-    // Asignar contadores del resumen
-    document.getElementById('tot-partidos').textContent = partidos.length;
-    document.getElementById('tot-goles').textContent = eventos.filter((e) => e.tipo === 'gol').length;
-    document.getElementById('tot-equipos').textContent = equipos.length;
-
     // Poblar el selector de categorias unicas existentes
     const fCat = document.getElementById('filtro-cat');
     const fGen = document.getElementById('filtro-gen');
@@ -232,7 +227,7 @@ export async function iniciarAdmin() {
   let sanciones = [];       // Tarjetas y multas registradas
   let finanzasCfg = {};     // Tarifas base (multas, arbitraje, inscripcion)
   let ticker = null;        // Temporizador setInterval para el reloj
-  let segsBase = 20 * 60;   // 20 minutos de futsal en segundos (1200)
+  let segsBase = 15 * 60;   // 20 minutos de futsal en segundos (1200)
   let tInicio = null;       // Marca de tiempo ISO cuando arranca el reloj
 
   // Configuracion de pestanas (Tabs)
