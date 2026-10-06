@@ -528,7 +528,503 @@
    }
 
    /* --------------------------------------------------------------------------
-   14. REGLAS RESPONSIVAS (MEDIA QUERIES)
+   15. TARJETAS DE PARTIDOS PROGRAMADOS
+   -------------------------------------------------------------------------- */
+   .partido-card {
+     background-color: var(--color-blanco);
+     border: 1px solid var(--color-borde);
+     border-radius: 8px;
+     padding: 14px;
+     margin-bottom: 10px;
+     transition: box-shadow 0.15s ease;
+   }
+
+   .partido-card:hover {
+     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+   }
+
+   .partido-card-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 8px;
+     flex-wrap: wrap;
+     gap: 6px;
+   }
+
+   .partido-card-equipos {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     gap: 12px;
+     font-size: 1.05rem;
+     padding: 6px 0;
+   }
+
+   .partido-card-vs {
+     font-size: 1.4rem;
+     font-weight: 900;
+     color: var(--color-verde);
+     font-family: ui-monospace, Consolas, monospace;
+   }
+
+   .partido-card-meta {
+     text-align: center;
+     color: var(--color-texto-secundario);
+     margin-bottom: 8px;
+   }
+
+   .partido-card-acciones {
+     display: flex;
+     justify-content: center;
+     gap: 6px;
+     flex-wrap: wrap;
+   }
+
+   /* --------------------------------------------------------------------------
+   16. PLANTEL DE EQUIPO (LISTA DE JUGADORES CON SUSPENSIONES)
+   -------------------------------------------------------------------------- */
+   .plantel-contenedor {
+     border: 1px solid var(--color-borde);
+     border-radius: 6px;
+     max-height: 220px;
+     overflow-y: auto;
+     margin-bottom: 10px;
+   }
+
+   .plantel-lista {
+     padding: 0;
+   }
+
+   .plantel-jugador {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 7px 10px;
+     border-bottom: 1px solid #eef1ee;
+     font-size: 0.84rem;
+     transition: background-color 0.1s ease;
+   }
+
+   .plantel-jugador:last-child {
+     border-bottom: 0;
+   }
+
+   .plantel-jugador:hover {
+     background-color: #f6f9f6;
+   }
+
+   .plantel-suspendido {
+     background-color: #fef0ed !important;
+     color: var(--color-rojo);
+     font-weight: 700;
+   }
+
+   .plantel-suspendido:hover {
+     background-color: #fde5df !important;
+   }
+
+   .plantel-info {
+     display: flex;
+     align-items: center;
+     gap: 6px;
+     flex-wrap: wrap;
+   }
+
+   .tag-suspension {
+     background-color: var(--color-rojo);
+     color: #fff;
+     font-size: 0.65rem;
+     padding: 1px 5px;
+     border-radius: 3px;
+     font-weight: 800;
+     text-transform: uppercase;
+   }
+
+   .plantel-tarjetas {
+     display: flex;
+     gap: 4px;
+   }
+
+   .badge-mini-tarj {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     width: 20px;
+     height: 16px;
+     border-radius: 2px;
+     font-size: 0.65rem;
+     font-weight: 800;
+     color: #fff;
+   }
+
+   .badge-mini-tarj.amarilla {
+     background-color: var(--color-amarillo);
+     color: #7d6608;
+   }
+
+   .badge-mini-tarj.roja {
+     background-color: var(--color-rojo);
+   }
+
+   /* --------------------------------------------------------------------------
+   17. MEJORAS VISUALES A LA PLANILLA EN VIVO
+   -------------------------------------------------------------------------- */
+   .panel-programar {
+     border-left: 4px solid var(--color-verde);
+   }
+
+   .programar-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 14px;
+     flex-wrap: wrap;
+     gap: 6px;
+   }
+
+   .planilla-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 10px;
+     flex-wrap: wrap;
+     gap: 6px;
+   }
+
+   .panel-planilla-vivo {
+     border: 2px solid var(--color-verde);
+     border-radius: 10px;
+   }
+
+   .panel-arbitraje {
+     background: #f9fbf9;
+     border: 1px solid var(--color-borde);
+     border-radius: 6px;
+     margin-bottom: 14px;
+     padding: 12px;
+   }
+
+   .panel-incidencia {
+     margin: 0;
+     background: #fbfdfb;
+   }
+
+   .reloj-controles {
+     display: flex;
+     justify-content: center;
+     gap: 8px;
+     margin-top: 10px;
+     flex-wrap: wrap;
+   }
+
+   /* ── Marcador y Ajustes de Goles ── */
+   .marcador-equipo-lado {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 5px;
+   }
+
+   .marcador-etiqueta-lado {
+     font-size: 0.72rem;
+     font-weight: 800;
+     letter-spacing: 1px;
+     color: #a8c5b9;
+   }
+
+   .marcador-centro {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+   }
+
+   .marcador-separador {
+     margin: 0 4px;
+     opacity: 0.6;
+   }
+
+   .marcador-subtitulo {
+     color: #a8c5b9;
+     text-transform: uppercase;
+     font-size: 0.7rem;
+     letter-spacing: 0.5px;
+   }
+
+   .marcador-ajustes {
+     display: flex;
+     gap: 6px;
+     margin-top: 8px;
+   }
+
+   .btn-gol-ajuste {
+     background: rgba(255, 255, 255, 0.15);
+     border: 1px solid rgba(255, 255, 255, 0.3);
+     color: #ffffff;
+     padding: 4px 10px;
+     font-size: 0.78rem;
+     font-weight: 700;
+     border-radius: 4px;
+     cursor: pointer;
+     transition: all 0.15s ease;
+   }
+
+   .btn-gol-ajuste:hover {
+     background: rgba(255, 255, 255, 0.3);
+     transform: translateY(-1px);
+   }
+
+   .btn-gol-ajuste.mas {
+     background: var(--color-verde);
+     border-color: var(--color-lima);
+     color: var(--color-lima);
+   }
+
+   .btn-gol-ajuste.mas:hover {
+     background: var(--color-verde-oscuro);
+   }
+
+   .btn-gol-ajuste.menos {
+     background: rgba(192, 57, 43, 0.4);
+     border-color: var(--color-rojo);
+     color: #ffb3ba;
+   }
+
+   .btn-gol-ajuste.menos:hover {
+     background: var(--color-rojo);
+     color: #ffffff;
+   }
+
+   /* ── Paneles de Incidencias por Equipo (Cero confusión) ── */
+   .panel-lado-local {
+     border-top: 4px solid var(--color-verde);
+     background: #f7faf7;
+     padding: 16px;
+     border-radius: 8px;
+     border: 1px solid #dce8dd;
+   }
+
+   .panel-lado-visita {
+     border-top: 4px solid #2980b9;
+     background: #f4f8fb;
+     padding: 16px;
+     border-radius: 8px;
+     border: 1px solid #d4e3ee;
+   }
+
+   .panel-lado-header {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     margin-bottom: 6px;
+   }
+
+   .badge-lado {
+     font-size: 0.72rem;
+     font-weight: 800;
+     padding: 3px 8px;
+     border-radius: 4px;
+     letter-spacing: 0.5px;
+   }
+
+   .badge-lado.local {
+     background: #e8f5e9;
+     color: var(--color-verde-oscuro);
+     border: 1px solid var(--color-verde);
+   }
+
+   .badge-lado.visita {
+     background: #e3f2fd;
+     color: #1565c0;
+     border: 1px solid #90caf9;
+   }
+
+   .select-jugador {
+     width: 100%;
+     font-size: 0.92rem;
+     font-weight: 600;
+     padding: 8px 10px;
+   }
+
+   .incidencia-acciones {
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     margin-top: 10px;
+   }
+
+   .btn-incidencia {
+     width: 100%;
+     font-weight: 800;
+     padding: 10px;
+     font-size: 0.95rem;
+     cursor: pointer;
+   }
+
+   .btn-inc-gol {
+     background: var(--color-verde);
+     color: #ffffff;
+     border: none;
+     border-radius: 6px;
+     transition: background 0.15s;
+   }
+
+   .btn-inc-gol:hover {
+     background: var(--color-verde-oscuro);
+   }
+
+   .incidencia-tarjetas {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 8px;
+   }
+
+   .btn-amarillo {
+     background: var(--color-amarillo);
+     color: #614a00;
+     border: 1px solid #d4ac0d;
+     font-weight: 700;
+   }
+
+   .btn-amarillo:hover {
+     background: #f4d03f;
+   }
+
+   .btn-rojo {
+     background: var(--color-rojo);
+     color: #ffffff;
+     border: 1px solid #a93226;
+     font-weight: 700;
+   }
+
+   .btn-rojo:hover {
+     background: #a93226;
+   }
+
+   .badge-stat-pill {
+     font-size: 0.75rem;
+     font-weight: 700;
+     padding: 3px 8px;
+     border-radius: 12px;
+     background: #e9ecef;
+     color: #495057;
+   }
+
+   /* ── Modulo de Definicion por Penales (5 Tiros) ── */
+   .panel-penales {
+     background: #11261d;
+     color: #ffffff;
+     border: 2px solid var(--color-lima);
+     border-radius: 8px;
+     margin-bottom: 16px;
+     padding: 16px;
+   }
+
+   .penales-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 10px;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+     padding-bottom: 10px;
+   }
+
+   .badge-penales {
+     background: var(--color-lima);
+     color: #0f241c;
+     font-size: 0.7rem;
+     font-weight: 800;
+     padding: 2px 8px;
+     border-radius: 4px;
+     letter-spacing: 1px;
+   }
+
+   .penales-marcador-global {
+     font-size: 2.2rem;
+     font-weight: 900;
+     color: var(--color-lima);
+     font-family: ui-monospace, Consolas, monospace;
+   }
+
+   .panel-tiros-equipo {
+     background: rgba(255, 255, 255, 0.05);
+     border: 1px solid rgba(255, 255, 255, 0.15);
+     border-radius: 6px;
+     padding: 12px;
+   }
+
+   .tiros-equipo-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 8px;
+   }
+
+   .badge-tiros-total {
+     font-size: 0.8rem;
+     font-weight: 800;
+     color: var(--color-lima);
+   }
+
+   .tiros-indicadores {
+     display: flex;
+     gap: 6px;
+     margin: 10px 0;
+     flex-wrap: wrap;
+   }
+
+   .tiro-slot {
+     display: inline-flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     min-width: 42px;
+     height: 38px;
+     border-radius: 4px;
+     font-size: 0.72rem;
+     font-weight: 800;
+     border: 1px solid rgba(255, 255, 255, 0.2);
+     background: rgba(0, 0, 0, 0.2);
+   }
+
+   .tiro-slot.gol {
+     background: var(--color-verde);
+     border-color: var(--color-lima);
+     color: var(--color-lima);
+   }
+
+   .tiro-slot.fallo {
+     background: rgba(192, 57, 43, 0.6);
+     border-color: var(--color-rojo);
+     color: #ffffff;
+   }
+
+   .tiro-slot.pendiente {
+     background: rgba(255, 255, 255, 0.05);
+     color: #8fa39a;
+   }
+
+   .tiros-botones {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 6px;
+     margin-top: 8px;
+   }
+
+   .penales-acciones-pie {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 10px;
+     margin-top: 14px;
+     padding-top: 10px;
+     border-top: 1px solid rgba(255, 255, 255, 0.1);
+   }
+
+   /* --------------------------------------------------------------------------
+   18. REGLAS RESPONSIVAS (MEDIA QUERIES)
    -------------------------------------------------------------------------- */
    @media (max-width: 768px) {
 
@@ -550,4 +1046,171 @@
        flex-direction: column;
        align-items: flex-start;
      }
+
+     .tabs {
+       flex-wrap: wrap;
+     }
+
+     .partido-card-equipos {
+       flex-direction: column;
+       gap: 4px;
+     }
+   }
+
+   /* ────────────────────────────────────────────────────────────────────────────
+      MODULO DE PENALES Y TIEMPO EXTRA
+   ──────────────────────────────────────────────────────────────────────────── */
+
+   /* Panel contenedor de la tanda de penales */
+   .panel-penales {
+     background: linear-gradient(135deg, #fef9e7 0%, #fdf2d5 100%);
+     border: 2px solid #f0c75e;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 16px;
+   }
+
+   .penales-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: flex-start;
+     flex-wrap: wrap;
+     gap: 12px;
+   }
+
+   .badge-penales {
+     display: inline-block;
+     padding: 3px 10px;
+     border-radius: 4px;
+     font-size: 0.7rem;
+     font-weight: 900;
+     letter-spacing: 1px;
+     text-transform: uppercase;
+     background: #e74c3c;
+     color: #fff;
+   }
+
+   .penales-marcador-global {
+     font-size: 2.2rem;
+     font-weight: 900;
+     color: var(--color-verde-oscuro);
+     letter-spacing: 2px;
+   }
+
+   /* Panel de tiros por equipo */
+   .panel-tiros-equipo {
+     background: var(--color-blanco);
+     border: 1px solid var(--color-borde);
+     border-radius: 8px;
+     padding: 14px;
+   }
+
+   .tiros-equipo-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 10px;
+     flex-wrap: wrap;
+     gap: 6px;
+   }
+
+   .badge-tiros-total {
+     display: inline-block;
+     padding: 2px 8px;
+     border-radius: 4px;
+     font-size: 0.75rem;
+     font-weight: 800;
+     background: var(--color-verde);
+     color: #fff;
+   }
+
+   /* Indicadores visuales de cada tiro (circulo con estado) */
+   .tiros-indicadores {
+     display: flex;
+     gap: 6px;
+     flex-wrap: wrap;
+     margin-bottom: 10px;
+     min-height: 36px;
+   }
+
+   .tiro-slot {
+     width: 36px;
+     height: 36px;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 0.75rem;
+     font-weight: 900;
+     border: 2px solid var(--color-borde);
+     background: #f9f9f9;
+     color: #999;
+     transition: all 0.2s ease;
+   }
+
+   .tiro-slot.tiro-gol {
+     background: var(--color-verde);
+     color: #fff;
+     border-color: var(--color-verde-oscuro);
+   }
+
+   .tiro-slot.tiro-fallo {
+     background: var(--color-rojo);
+     color: #fff;
+     border-color: #922b21;
+   }
+
+   .tiro-slot.tiro-pendiente {
+     background: #f9f9f9;
+     color: #bbb;
+     border-color: var(--color-borde);
+   }
+
+   /* Botones de accion para registrar tiros */
+   .tiros-botones {
+     display: flex;
+     gap: 6px;
+     flex-wrap: wrap;
+   }
+
+   .btn-verde {
+     background: var(--color-verde) !important;
+     color: #fff !important;
+     border-color: var(--color-verde-oscuro) !important;
+   }
+
+   .btn-verde:hover {
+     background: var(--color-verde-oscuro) !important;
+   }
+
+   .btn-rojo {
+     background: var(--color-rojo) !important;
+     color: #fff !important;
+     border-color: #922b21 !important;
+   }
+
+   .btn-rojo:hover {
+     background: #922b21 !important;
+   }
+
+   .btn-amarillo {
+     background: var(--color-amarillo) !important;
+     color: #333 !important;
+     border-color: #d4ac0d !important;
+   }
+
+   .btn-amarillo:hover {
+     background: #d4ac0d !important;
+   }
+
+   /* Pie del modulo de penales */
+   .penales-acciones-pie {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 10px;
+     margin-top: 14px;
+     padding-top: 12px;
+     border-top: 1px solid #e8d5a0;
    }

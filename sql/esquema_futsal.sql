@@ -71,10 +71,14 @@ CREATE TABLE IF NOT EXISTS public.partidos (
   goles_visitante SMALLINT NOT NULL DEFAULT 0 CHECK (goles_visitante >= 0),
   costo_arbitraje NUMERIC(10, 2) NOT NULL DEFAULT 30.00,
   arbitraje_pagado BOOLEAN NOT NULL DEFAULT false,
-  estado TEXT NOT NULL DEFAULT 'programado' CHECK (estado IN ('programado', 'en_juego', 'descanso', 'finalizado', 'suspendido')),
-  periodo SMALLINT NOT NULL DEFAULT 1 CHECK (periodo IN (1, 2)),
-  reloj_segundos INTEGER NOT NULL DEFAULT 1200 CHECK (reloj_segundos >= 0),
+  estado TEXT NOT NULL DEFAULT 'programado' CHECK (estado IN ('programado', 'en_juego', 'descanso', 'finalizado', 'suspendido', 'postergado', 'tiempo_extra', 'penales')),
+  periodo SMALLINT NOT NULL DEFAULT 1 CHECK (periodo BETWEEN 1 AND 4),
+  reloj_segundos INTEGER NOT NULL DEFAULT 900 CHECK (reloj_segundos >= 0),
   reloj_iniciado_en TIMESTAMPTZ,
+  penales_local SMALLINT DEFAULT NULL,
+  penales_visitante SMALLINT DEFAULT NULL,
+  penales_local_tiros JSONB NOT NULL DEFAULT '[]'::jsonb,
+  penales_visitante_tiros JSONB NOT NULL DEFAULT '[]'::jsonb,
   creado_en TIMESTAMPTZ NOT NULL DEFAULT now(),
   CHECK (equipo_local_id <> equipo_visitante_id)
 );
@@ -82,6 +86,14 @@ CREATE TABLE IF NOT EXISTS public.partidos (
 -- Agregar columnas en caso de que la tabla ya existiese previamente
 ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS costo_arbitraje NUMERIC(10, 2) NOT NULL DEFAULT 30.00;
 ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS arbitraje_pagado BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS penales_local SMALLINT DEFAULT NULL;
+ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS penales_visitante SMALLINT DEFAULT NULL;
+ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS penales_local_tiros JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE public.partidos ADD COLUMN IF NOT EXISTS penales_visitante_tiros JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE public.partidos ALTER COLUMN reloj_segundos SET DEFAULT 900;
+UPDATE public.partidos
+SET reloj_segundos = 900
+WHERE estado = 'programado' AND periodo = 1 AND reloj_segundos = 1200;
 
 -- 6. TABLA DE EVENTOS EN CANCHA (GOLES Y TARJETAS)
 CREATE TABLE IF NOT EXISTS public.eventos_partido (
@@ -90,7 +102,7 @@ CREATE TABLE IF NOT EXISTS public.eventos_partido (
   equipo_id UUID NOT NULL REFERENCES public.equipos(id) ON DELETE CASCADE,
   jugador_id UUID REFERENCES public.jugadores(id) ON DELETE SET NULL,
   tipo TEXT NOT NULL CHECK (tipo IN ('gol', 'amarilla', 'roja')),
-  periodo SMALLINT NOT NULL CHECK (periodo IN (1, 2)),
+  periodo SMALLINT NOT NULL CHECK (periodo BETWEEN 1 AND 4),
   segundo_partido INTEGER NOT NULL DEFAULT 0 CHECK (segundo_partido >= 0),
   creado_en TIMESTAMPTZ NOT NULL DEFAULT now()
 );

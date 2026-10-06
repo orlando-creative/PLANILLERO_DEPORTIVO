@@ -20,110 +20,282 @@
 
     <div id="aviso-admin" class="aviso" hidden></div>
 
+    <!-- Pestanas de navegacion (se fusionó "Programar Partido" con "Planilla en Vivo") -->
     <nav class="tabs">
       <button type="button" class="tab-btn activo" data-tab="sec-planilla">Planilla en Vivo</button>
       <button type="button" class="tab-btn" data-tab="sec-registro">Registro de Partidos</button>
-      <button type="button" class="tab-btn" data-tab="sec-nuevo">Programar Partido</button>
       <button type="button" class="tab-btn" data-tab="sec-equipos">Equipos y Jugadores</button>
       <button type="button" class="tab-btn" data-tab="sec-finanzas">Rendicion de Cuentas</button>
     </nav>
 
-    <!-- 1. PLANILLA EN VIVO -->
+    <!-- ================================================================== -->
+    <!-- 1. PLANILLA EN VIVO + PROGRAMAR PARTIDO (FUSIONADAS)               -->
+    <!-- ================================================================== -->
     <section id="sec-planilla" class="tab-sec">
-      <div id="sin-partido" class="panel">
-        <h3>No hay un partido abierto en la planilla</h3>
-        <p class="muted">Selecciona un partido del <a href="#"
-            onclick="document.querySelector('[data-tab=\'sec-registro\']').click();return false;">Registro de
-            Partidos</a> o programa uno nuevo.</p>
+
+      <!-- ── A) Formulario de Programar Partido (siempre visible) ── -->
+      <div class="panel panel-programar">
+        <div class="programar-header">
+          <h2>Programar Nuevo Partido</h2>
+          <small class="muted">Desde aquí programa, edita o posterga los partidos del campeonato</small>
+        </div>
+        <form id="form-partido">
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="partido-fase">Fase o Fecha</label>
+              <input id="partido-fase" placeholder="Ej. Fecha 1, Semifinal" required />
+            </div>
+            <div class="form-group">
+              <label for="partido-fecha">Fecha y Hora</label>
+              <input id="partido-fecha" type="datetime-local" required />
+            </div>
+          </div>
+
+          <!-- Equipo Local + Plantel -->
+          <div class="grid-2">
+            <div>
+              <div class="form-group">
+                <label for="s-partido-local">Equipo Local</label>
+                <select id="s-partido-local" required></select>
+              </div>
+              <div class="form-group">
+                <label for="s-cap-local">Capitán Local</label>
+                <select id="s-cap-local">
+                  <option value="">Sin designar</option>
+                </select>
+              </div>
+              <!-- Lista de jugadores del equipo local (con suspensiones) -->
+              <div id="plantel-local" class="plantel-contenedor"></div>
+            </div>
+
+            <!-- Equipo Visitante + Plantel -->
+            <div>
+              <div class="form-group">
+                <label for="s-partido-visita">Equipo Visitante</label>
+                <select id="s-partido-visita" required></select>
+              </div>
+              <div class="form-group">
+                <label for="s-cap-visita">Capitán Visitante</label>
+                <select id="s-cap-visita">
+                  <option value="">Sin designar</option>
+                </select>
+              </div>
+              <!-- Lista de jugadores del equipo visitante (con suspensiones) -->
+              <div id="plantel-visita" class="plantel-contenedor"></div>
+            </div>
+          </div>
+
+          <div class="form-group" style="max-width:300px">
+            <label for="partido-arbitraje">Costo de Arbitraje para este Partido (Bs.)</label>
+            <input id="partido-arbitraje" type="number" step="1" min="0" value="30" required />
+          </div>
+
+          <button class="btn" type="submit" style="margin-top:10px">Guardar y Abrir en Planilla</button>
+        </form>
       </div>
 
-      <div id="con-partido" class="panel" hidden>
-        <div
-          style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px">
-          <span class="hero-tag">Planilla Oficial de Partido</span>
-          <small id="meta-partido-texto" style="font-weight:700; color:var(--muted)"></small>
+      <!-- ── B) Planilla en Vivo ── -->
+      <div id="sin-partido" class="panel">
+        <h3>No hay un partido abierto en la planilla</h3>
+        <p class="muted">Programa un nuevo partido arriba o abre uno existente desde la pestaña de Registro de Partidos.</p>
+        <button type="button" class="btn btn-sm btn-out" id="btn-ir-registro" style="margin-top:10px">Ver Partidos en Registro</button>
+      </div>
+
+      <div id="con-partido" class="panel panel-planilla-vivo" hidden>
+        <div class="planilla-header">
+          <span class="hero-tag">Planilla Oficial de Partido en Vivo</span>
+          <small id="meta-partido-texto" style="font-weight:700; color:var(--color-texto-secundario)"></small>
         </div>
 
-        <!-- Marcador Digital -->
+        <!-- Marcador Digital Oficial -->
         <div class="marcador">
-          <div>
+          <div class="marcador-equipo-lado">
+            <span class="marcador-etiqueta-lado">LOCAL</span>
             <span class="marcador-nombre" id="mar-nom-local">Local</span>
-            <span class="badge-cap" id="mar-cap-local">(C) Capitan</span>
-          </div>
-          <div>
-            <div class="marcador-goles">
-              <span id="mar-gol-local">0</span> - <span id="mar-gol-visita">0</span>
+            <span class="badge-cap" id="mar-cap-local">(C) Capitán</span>
+            <div class="marcador-ajustes">
+              <button type="button" class="btn-gol-ajuste mas" id="btn-gol-local-mas" title="Sumar gol a Local">+1 Gol</button>
+              <button type="button" class="btn-gol-ajuste menos" id="btn-gol-local-menos" title="Deshacer último gol de Local">-1</button>
             </div>
-            <small style="color:#a8c5b9; text-transform:uppercase; font-size:.7rem">Goles Oficiales</small>
           </div>
-          <div>
+          <div class="marcador-centro">
+            <div class="marcador-goles">
+              <span id="mar-gol-local">0</span><span class="marcador-separador">:</span><span id="mar-gol-visita">0</span>
+            </div>
+            <small class="marcador-subtitulo">Goles Oficiales</small>
+            <div id="marcador-penales-badge" style="margin-top:4px" hidden>
+              <span class="badge-stat-pill" style="background:#fef9e7;color:#7d6608;font-weight:800" id="txt-marcador-penales">Penales: 0 - 0</span>
+            </div>
+          </div>
+          <div class="marcador-equipo-lado">
+            <span class="marcador-etiqueta-lado">VISITANTE</span>
             <span class="marcador-nombre" id="mar-nom-visita">Visitante</span>
-            <span class="badge-cap" id="mar-cap-visita">(C) Capitan</span>
+            <span class="badge-cap" id="mar-cap-visita">(C) Capitán</span>
+            <div class="marcador-ajustes">
+              <button type="button" class="btn-gol-ajuste mas" id="btn-gol-visita-mas" title="Sumar gol a Visitante">+1 Gol</button>
+              <button type="button" class="btn-gol-ajuste menos" id="btn-gol-visita-menos" title="Deshacer último gol de Visitante">-1</button>
+            </div>
           </div>
         </div>
 
-        <!-- Cronómetro de Futsal -->
+        <!-- Cronómetro Oficial de Futsal (15 min reglamentarios + 10 min tiempo extra) -->
         <div class="reloj-box">
           <span class="reloj-tit" id="reloj-periodo">1° TIEMPO</span>
-          <div class="reloj-num" id="reloj-num">20:00</div>
-          <div style="display:flex; justify-content:center; gap:8px; margin-top:10px; flex-wrap:wrap">
+          <div class="reloj-num" id="reloj-num">15:00</div>
+          <div class="reloj-controles">
             <button class="btn btn-sm" id="btn-reloj-ini" type="button">Iniciar / Continuar</button>
             <button class="btn btn-sm btn-out" id="btn-reloj-pau" type="button"
               style="color:#fff;border-color:#fff">Pausar</button>
             <button class="btn btn-sm btn-out" id="btn-reloj-2t" type="button"
-              style="color:var(--lime);border-color:var(--lime)">2do Tiempo (20:00)</button>
+              style="color:var(--color-lima);border-color:var(--color-lima)">2do Tiempo (15:00)</button>
+            <button class="btn btn-sm btn-out" id="btn-reloj-extra" type="button"
+              style="color:#5dade2;border-color:#5dade2" title="Jugar 10 minutos de tiempo extra en caso de empate">Tiempo Extra (10:00)</button>
+            <button class="btn btn-sm btn-out" id="btn-toggle-penales" type="button"
+              style="color:#f1c40f;border-color:#f1c40f" title="Definición por 5 tiros de penal por equipo">Tanda de Penales (5 tiros)</button>
             <button class="btn btn-sm btn-red" id="btn-reloj-fin" type="button">Finalizar Partido</button>
           </div>
         </div>
 
+        <!-- Definición por Tanda de Penales (5 tiros por equipo en caso de empate) -->
+        <div id="panel-penales" class="panel panel-penales" hidden>
+          <div class="penales-header">
+            <div>
+              <span class="badge-penales">DESEMPATE OFICIAL</span>
+              <h3 style="margin:4px 0 0 0">Tanda de Penales (5 Tiros por Equipo)</h3>
+              <small class="muted">Registra los tiros reglamentarios para cada equipo. Si persiste el empate se continúa tiro a tiro.</small>
+            </div>
+            <div class="penales-marcador-global">
+              <span id="penales-score-local">0</span> - <span id="penales-score-visita">0</span>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top:14px">
+            <!-- Penales Local -->
+            <div class="panel-tiros-equipo">
+              <div class="tiros-equipo-header">
+                <strong>Local: <span id="penales-nom-local">Local</span></strong>
+                <span class="badge-tiros-total" id="penales-total-local">0 goles</span>
+              </div>
+              <div class="tiros-indicadores" id="indicadores-penales-local"></div>
+              <div class="tiros-botones">
+                <button type="button" class="btn btn-sm btn-verde" id="btn-penal-local-gol">+ Gol de Penal</button>
+                <button type="button" class="btn btn-sm btn-rojo" id="btn-penal-local-fallo">+ Penal Fallado</button>
+              </div>
+            </div>
+
+            <!-- Penales Visitante -->
+            <div class="panel-tiros-equipo">
+              <div class="tiros-equipo-header">
+                <strong>Visitante: <span id="penales-nom-visita">Visitante</span></strong>
+                <span class="badge-tiros-total" id="penales-total-visita">0 goles</span>
+              </div>
+              <div class="tiros-indicadores" id="indicadores-penales-visita"></div>
+              <div class="tiros-botones">
+                <button type="button" class="btn btn-sm btn-verde" id="btn-penal-visita-gol">+ Gol de Penal</button>
+                <button type="button" class="btn btn-sm btn-rojo" id="btn-penal-visita-fallo">+ Penal Fallado</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="penales-acciones-pie">
+            <span id="penales-estado-texto" style="font-weight:700; color:var(--color-verde)">Tanda de Penales lista (5 tiros por equipo)</span>
+            <div style="display:flex; gap:8px">
+              <button type="button" class="btn btn-sm btn-out" id="btn-penal-deshacer">Deshacer Último Tiro</button>
+              <button type="button" class="btn btn-sm btn-out" id="btn-penal-reiniciar">Reiniciar Tanda</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Control de Arbitraje del Partido en Cancha -->
-        <div class="panel" style="background:#f9fbf9; margin-bottom:14px; padding:12px">
+        <div class="panel-arbitraje">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
             <div>
               <strong>Arbitraje del Partido:</strong> Bs. <span id="txt-costo-arbitraje-partido">0.00</span>
             </div>
             <label style="display:inline-flex; align-items:center; gap:6px; font-weight:700; cursor:pointer">
-              <input type="checkbox" id="chk-arbitraje-pagado"> Arbitraje Pagado al Arbitro
+              <input type="checkbox" id="chk-arbitraje-pagado"> Arbitraje Pagado al Árbitro
             </label>
           </div>
         </div>
 
-        <!-- Registro de Incidencias en Cancha -->
-        <div class="grid-2">
-          <div class="panel" style="margin:0; background:#fbfdfb">
-            <h3>Anotar Incidencia en Cancha</h3>
-            <form id="form-incidencia">
-              <div class="form-group">
-                <label for="s-incidencia-tipo">Incidencia</label>
-                <select id="s-incidencia-tipo">
-                  <option value="gol">Gol anotado</option>
-                  <option value="amarilla">Tarjeta Amarilla</option>
-                  <option value="roja">Tarjeta Roja</option>
-                </select>
+        <!-- Registro de Incidencias en Cancha: Separado por Equipo (CERO ERRORES DE EQUIPO) -->
+        <div class="grid-2" style="margin-top:14px">
+          <!-- ── Panel Incidencias: Equipo Local ── -->
+          <div class="panel panel-incidencia panel-lado-local">
+            <div class="panel-lado-header">
+              <span class="badge-lado local">LOCAL</span>
+              <h3 id="panel-nom-local" style="margin:0;font-size:1.1rem">Equipo Local</h3>
+            </div>
+            <p class="muted" style="font-size:0.8rem; margin:6px 0 10px 0">Anotar gol o amonestación a este equipo:</p>
+            <div class="form-group">
+              <label for="s-jugador-local">Jugador del Plantel Local:</label>
+              <select id="s-jugador-local" class="select-jugador">
+                <option value="">Gol de Equipo / Sin dorsal asignado</option>
+              </select>
+            </div>
+            <div class="incidencia-acciones">
+              <button type="button" class="btn btn-incidencia btn-inc-gol" id="btn-inc-gol-local">
+                + Anotar Gol Local
+              </button>
+              <div class="incidencia-tarjetas">
+                <button type="button" class="btn btn-sm btn-amarillo" id="btn-inc-amarilla-local" title="Tarjeta Amarilla (Requiere seleccionar jugador)">
+                  + Tarjeta Amarilla
+                </button>
+                <button type="button" class="btn btn-sm btn-rojo" id="btn-inc-roja-local" title="Tarjeta Roja (Requiere seleccionar jugador)">
+                  + Tarjeta Roja
+                </button>
               </div>
-              <div class="form-group">
-                <label for="s-incidencia-equipo">Equipo</label>
-                <select id="s-incidencia-equipo" required></select>
-              </div>
-              <div class="form-group">
-                <label for="s-incidencia-jugador">Jugador en cancha</label>
-                <select id="s-incidencia-jugador" required></select>
-              </div>
-              <button class="btn" type="submit" style="width:100%">Registrar en Planilla</button>
-            </form>
+            </div>
           </div>
 
-          <div class="panel" style="margin:0">
-            <h3>Incidencias del Encuentro</h3>
-            <ul class="lista-eventos" id="lista-eventos-planilla">
-              <li class="empty">Sin incidencias registradas.</li>
-            </ul>
+          <!-- ── Panel Incidencias: Equipo Visitante ── -->
+          <div class="panel panel-incidencia panel-lado-visita">
+            <div class="panel-lado-header">
+              <span class="badge-lado visita">VISITANTE</span>
+              <h3 id="panel-nom-visita" style="margin:0;font-size:1.1rem">Equipo Visitante</h3>
+            </div>
+            <p class="muted" style="font-size:0.8rem; margin:6px 0 10px 0">Anotar gol o amonestación a este equipo:</p>
+            <div class="form-group">
+              <label for="s-jugador-visita">Jugador del Plantel Visitante:</label>
+              <select id="s-jugador-visita" class="select-jugador">
+                <option value="">Gol de Equipo / Sin dorsal asignado</option>
+              </select>
+            </div>
+            <div class="incidencia-acciones">
+              <button type="button" class="btn btn-incidencia btn-inc-gol" id="btn-inc-gol-visita">
+                + Anotar Gol Visitante
+              </button>
+              <div class="incidencia-tarjetas">
+                <button type="button" class="btn btn-sm btn-amarillo" id="btn-inc-amarilla-visita" title="Tarjeta Amarilla (Requiere seleccionar jugador)">
+                  + Tarjeta Amarilla
+                </button>
+                <button type="button" class="btn btn-sm btn-rojo" id="btn-inc-roja-visita" title="Tarjeta Roja (Requiere seleccionar jugador)">
+                  + Tarjeta Roja
+                </button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- ── Timeline / Lista de Incidencias Oficiales ── -->
+        <div class="panel" style="margin-top:16px">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px">
+            <div>
+              <h3 style="margin:0">Incidencias y Registro en Acta</h3>
+              <small class="muted" id="resumen-incidencias-texto">Goles y sanciones registradas en este partido</small>
+            </div>
+            <div id="stats-partido-badges" style="display:flex; gap:6px; flex-wrap:wrap"></div>
+          </div>
+          <ul class="lista-eventos" id="lista-eventos-planilla">
+            <li class="empty">Sin incidencias registradas en este partido.</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- 2. REGISTRO GENERAL Y REINICIO DE CAMPEONATO -->
+    <!-- ================================================================== -->
+    <!-- 2. REGISTRO GENERAL Y REINICIO DE CAMPEONATO                       -->
+    <!-- ================================================================== -->
     <section id="sec-registro" class="tab-sec" hidden>
       <div class="panel">
         <div
@@ -138,59 +310,9 @@
       </div>
     </section>
 
-    <!-- 3. PROGRAMAR NUEVO PARTIDO -->
-    <section id="sec-nuevo" class="tab-sec" hidden>
-      <div class="panel">
-        <h2>Programar Partido</h2>
-        <form id="form-partido">
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="partido-fase">Fase o Fecha</label>
-              <input id="partido-fase" placeholder="Ej. Fecha 1, Semifinal" required />
-            </div>
-            <div class="form-group">
-              <label for="partido-fecha">Fecha y Hora</label>
-              <input id="partido-fecha" type="datetime-local" required />
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="s-partido-local">Equipo Local</label>
-              <select id="s-partido-local" required></select>
-            </div>
-            <div class="form-group">
-              <label for="s-cap-local">Capitan Local</label>
-              <select id="s-cap-local">
-                <option value="">Sin designar</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="s-partido-visita">Equipo Visitante</label>
-              <select id="s-partido-visita" required></select>
-            </div>
-            <div class="form-group">
-              <label for="s-cap-visita">Capitan Visitante</label>
-              <select id="s-cap-visita">
-                <option value="">Sin designar</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" style="max-width:300px">
-            <label for="partido-arbitraje">Costo de Arbitraje para este Partido (Bs.)</label>
-            <input id="partido-arbitraje" type="number" step="1" min="0" value="30" required />
-          </div>
-
-          <button class="btn" type="submit" style="margin-top:10px">Guardar y Abrir en Planilla</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- 4. EQUIPOS Y JUGADORES -->
+    <!-- ================================================================== -->
+    <!-- 3. EQUIPOS Y JUGADORES                                             -->
+    <!-- ================================================================== -->
     <section id="sec-equipos" class="tab-sec" hidden>
       <div class="grid-2">
         <div class="panel">
@@ -247,33 +369,35 @@
       </div>
     </section>
 
-    <!-- 5. RENDICION DE CUENTAS Y CONTROL FINANCIERO -->
+    <!-- ================================================================== -->
+    <!-- 4. RENDICION DE CUENTAS Y CONTROL FINANCIERO                       -->
+    <!-- ================================================================== -->
     <section id="sec-finanzas" class="tab-sec" hidden>
       <!-- Resumen de Balance -->
       <div class="grid-3" style="margin-bottom:16px">
         <div class="stat-card">
           <span class="stat-num" id="kpi-ingresos-inscripciones">Bs. 0.00</span>
           <span class="stat-lbl">Inscripciones Cobradas</span>
-          <small id="kpi-inscripciones-pendientes" style="display:block; color:var(--muted); margin-top:4px"></small>
+          <small id="kpi-inscripciones-pendientes" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
         </div>
         <div class="stat-card">
           <span class="stat-num" id="kpi-ingresos-multas">Bs. 0.00</span>
           <span class="stat-lbl">Multas Cobradas</span>
-          <small id="kpi-multas-pendientes" style="display:block; color:var(--muted); margin-top:4px"></small>
+          <small id="kpi-multas-pendientes" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
         </div>
         <div class="stat-card">
           <span class="stat-num" id="kpi-egresos-arbitraje">Bs. 0.00</span>
           <span class="stat-lbl">Arbitrajes Pagados</span>
-          <small id="kpi-arbitraje-pendiente" style="display:block; color:var(--muted); margin-top:4px"></small>
+          <small id="kpi-arbitraje-pendiente" style="display:block; color:var(--color-texto-secundario); margin-top:4px"></small>
         </div>
       </div>
 
       <div class="panel"
         style="background:#eef6f1; border-color:#9dc7ad; text-align:center; padding:16px; margin-bottom:20px">
-        <span style="text-transform:uppercase; font-size:.8rem; font-weight:800; color:var(--muted)">Saldo Neto /
+        <span style="text-transform:uppercase; font-size:.8rem; font-weight:800; color:var(--color-texto-secundario)">Saldo Neto /
           Balance Disponible en Caja</span>
         <div id="kpi-balance-general" style="font-size:2.4rem; font-weight:900; margin:4px 0">Bs. 0.00</div>
-        <small style="color:var(--muted)">Calculo: (Inscripciones Cobradas + Multas Cobradas) - Arbitrajes
+        <small style="color:var(--color-texto-secundario)">Calculo: (Inscripciones Cobradas + Multas Cobradas) - Arbitrajes
           Pagados</small>
       </div>
 
@@ -356,7 +480,7 @@
   <footer></footer>
 
   <script type="module">
-    import { iniciarAdmin } from './js/app.js';
+    import { iniciarAdmin } from './js/app-admin.js';
     iniciarAdmin();
   </script>
 </body>
