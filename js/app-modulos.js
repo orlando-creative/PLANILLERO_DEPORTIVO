@@ -165,7 +165,7 @@ export function crearModuloGestion({ datos, cargar, abrirPlanilla, cerrarPlanill
   const renderEquipos = () => {
     const container = document.getElementById('equipos-registrados');
     if (!container) return;
-    const { equipos, jugadores } = datos();
+    const { equipos, jugadores, partidos } = datos();
     container.innerHTML = equipos.length ? equipos.map((team) => {
       const integrantes = jugadores.filter((player) => player.equipo_id === team.id);
       return `<article class="equipo-admin-card">
