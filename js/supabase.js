@@ -18,6 +18,7 @@ const CLAVE_SESION = 'futsal_auth_sesion';
  */
 export function obtenerSesion() {
   try {
+    // localStorage guarda JSON; se convierte de nuevo a objeto para usar sus propiedades.
     const s = localStorage.getItem(CLAVE_SESION);
     return s ? JSON.parse(s) : null;
   } catch {
@@ -30,6 +31,7 @@ export function obtenerSesion() {
  * @returns {Object|null} Datos del usuario o null
  */
 export function obtenerUsuario() {
+  // La sesión puede no existir, por eso se devuelve null en ese caso.
   return obtenerSesion()?.user || null;
 }
 
@@ -64,10 +66,12 @@ function headers(token = null) {
  * @returns {Promise<Array>} Lista de registros obtenidos
  */
 export async function leer(tabla, campoOrden = null) {
+  // PostgREST devuelve todas las columnas; el orden descendente es opcional.
   let url = `${SUPABASE_URL}/rest/v1/${tabla}?select=*`;
   if (campoOrden) url += `&order=${campoOrden}.desc`;
   const res = await fetch(url, { headers: headers() });
   if (!res.ok) {
+    // Convierte el error HTTP en una excepción legible para el módulo que llamó.
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || `Error al leer ${tabla}`);
   }
@@ -81,6 +85,7 @@ export async function leer(tabla, campoOrden = null) {
  * @returns {Promise<Array>} Registros insertados
  */
 export async function guardar(tabla, datos) {
+  // La API espera una colección, incluso cuando se inserta un solo objeto.
   const body = Array.isArray(datos) ? datos : [datos];
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}`, {
     method: 'POST',
@@ -102,6 +107,7 @@ export async function guardar(tabla, datos) {
  * @returns {Promise<Array>} Registro actualizado
  */
 export async function actualizar(tabla, id, datos) {
+  // El filtro por ID limita el PATCH al registro solicitado.
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?id=eq.${id}`, {
     method: 'PATCH',
     headers: headers(),
@@ -121,6 +127,7 @@ export async function actualizar(tabla, id, datos) {
  * @returns {Promise<boolean>} true si se elimino correctamente
  */
 export async function borrar(tabla, id) {
+  // Elimina solo el registro cuyo ID coincide; la base gestiona relaciones en cascada.
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${tabla}?id=eq.${id}`, {
     method: 'DELETE',
     headers: headers()
@@ -139,6 +146,7 @@ export async function borrar(tabla, id) {
  * @returns {Promise<boolean>} true al completar la eliminacion
  */
 export async function reiniciarCampeonato() {
+  // El filtro neq con un UUID inexistente selecciona todos los partidos.
   const res = await fetch(`${SUPABASE_URL}/rest/v1/partidos?id=neq.00000000-0000-0000-0000-000000000000`, {
     method: 'DELETE',
     headers: headers()
@@ -158,6 +166,7 @@ export async function reiniciarCampeonato() {
  * @returns {Promise<Object>} Objeto de sesion autenticada
  */
 export async function iniciarSesion(email, password) {
+  // Normaliza el correo y solicita a Supabase Auth una sesión con contraseña.
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
     headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
@@ -173,6 +182,7 @@ export async function iniciarSesion(email, password) {
   const perfiles = await perfilRes.json().catch(() => []);
   const rol = perfiles[0]?.rol || 'espectador';
 
+  // La sesión administrativa no se guarda si el perfil no tiene permisos suficientes.
   if (rol !== 'administrador') {
     throw new Error('Esta cuenta no tiene permisos de administrador.');
   }
@@ -187,6 +197,7 @@ export async function iniciarSesion(email, password) {
  * Cierra la sesion del usuario y redirige a la pagina de inicio
  */
 export function cerrarSesion() {
+  // Borra la sesión local antes de regresar a la página pública.
   localStorage.removeItem(CLAVE_SESION);
   window.location.href = 'index.html';
 }

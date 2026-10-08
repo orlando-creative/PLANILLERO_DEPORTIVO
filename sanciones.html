@@ -6,8 +6,27 @@
     <title>Sanciones y Disciplina | U.E. Luz del Mundo A</title>
     <link rel="stylesheet" href="css/estilos.css" />
   </head>
+
   <body>
-    <header></header>
+    <header>
+      <div class="header-top">U.E. "Luz del Mundo A" · Campeonato de Futsal 2026</div>
+      <div class="header-main">
+        <div class="contenedor header-bar">
+          <a href="index.html" class="marca">
+            <img src="assets/escudo-luz-del-mundo.svg" alt="Escudo">
+            <div class="marca-tit">PLANILLERO <span>FUTSAL</span></div>
+          </a>
+          <nav class="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="sanciones.html" class="activo">Sanciones</a>
+            <a href="reglamento.html">Reglamento</a>
+            <a href="administracion.html" class="admin-link" id="nav-admin" hidden>Mesa de Planilla</a>
+            <a href="inicio-sesion.html" class="btn btn-sm btn-out" id="nav-login" style="color:#fff;border-color:#fff">Acceso Admin</a>
+            <button type="button" class="btn btn-sm btn-red" id="btn-logout" hidden>Salir</button>
+          </nav>
+        </div>
+      </div>
+    </header>
     <main class="contenedor">
       <section class="hero">
         <span class="hero-tag">Tribunal de Disciplina</span>
@@ -34,7 +53,15 @@
         </div>
       </div>
     </main>
-    <footer></footer>
+    <footer>
+      <div class="contenedor">
+        <p><strong>U.E. Luz del Mundo A · Planillero Oficial de Futsal</strong></p>
+        <p style="margin-top:6px">
+          <a href="index.html">Inicio</a> · <a href="sanciones.html">Sanciones</a> · <a href="reglamento.html">Reglamento</a>
+          · <a href="administracion.html" id="footer-admin" hidden>Mesa de Planilla</a>
+        </p>
+      </div>
+    </footer>
 
     <script type="module">
       import { iniciarSanciones } from './js/app.js';

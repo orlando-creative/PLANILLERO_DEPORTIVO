@@ -45,8 +45,9 @@ El navegador importa módulos ES desde archivos locales y accede a Supabase con 
 | [css/estilos.css](./css/estilos.css) | Estilos compartidos y diseño adaptable. |
 | [js/supabase.js](./js/supabase.js) | Cliente REST, sesión, autenticación y operaciones de datos. |
 | [js/app.js](./js/app.js) | Utilidades compartidas, navegación y páginas públicas. |
-| [js/app-modulos.js](./js/app-modulos.js) | Módulos de gestión, penales y presentación del reloj. |
-| [js/app-admin.js](./js/app-admin.js) | Coordinación de la planilla, el reloj y las incidencias en vivo. |
+| [js/app-planilla.js](./js/app-planilla.js) | Planilla en vivo, reloj, incidencias y tanda de penales. |
+| [js/app-partidos.js](./js/app-partidos.js) | Programación, edición y registro de partidos. |
+| [js/app-equipos.js](./js/app-equipos.js) | Gestión de equipos, jugadores e inscripciones. |
 | [sql/esquema_futsal.sql](./sql/esquema_futsal.sql) | Tablas, vistas, triggers, funciones y políticas RLS. |
 | [vercel.json](./vercel.json) | Configuración para servir el sitio estático en Vercel. |
 
@@ -54,7 +55,7 @@ El navegador importa módulos ES desde archivos locales y accede a Supabase con 
 
 1. Cada página HTML carga el módulo que necesita con `<script type="module">`.
 2. Las páginas públicas llaman funciones de `app.js`.
-3. `app-admin.js` coordina la planilla y utiliza los módulos exportados por `app-modulos.js`.
+3. `app-planilla.js` administra la planilla en vivo; `app-partidos.js` y `app-equipos.js` se ocupan de sus respectivas pantallas de administración.
 4. Los módulos del navegador usan las operaciones exportadas por `supabase.js`, que envía solicitudes a la API REST y agrega la clave pública y, cuando hay sesión, el token del usuario.
 5. PostgreSQL aplica las reglas de seguridad y mantiene las estadísticas derivadas mediante vistas y triggers.
 
@@ -151,6 +152,9 @@ El proyecto es estático y contiene una configuración de Vercel en [vercel.json
 - La clave `anon` es pública y no sustituye las políticas RLS. Nunca se debe publicar la clave `service_role`.
 - La sesión se guarda en `localStorage`; al salir se borra desde la aplicación.
 
-## Guía para estudiar y exponer
+## Guías para estudiar y exponer
 
-Para repartir la explicación de los tres archivos JavaScript de la aplicación entre estudiantes, consulta [README_EXPOSICION.md](./README_EXPOSICION.md). El cliente técnico [js/supabase.js](./js/supabase.js) queda fuera de esa división.
+- [README_EXPOSICION.md](./README_EXPOSICION.md) contiene el reparto para tres estudiantes, el vocabulario de funciones y una explicación de los módulos.
+- [README_PRACTICA.md](./README_PRACTICA.md) detalla cómo presentar la construcción de los botones para eliminar equipos, reiniciar el campeonato e iniciar el tiempo extra.
+
+El cliente técnico [js/supabase.js](./js/supabase.js) es compartido por los módulos y no se asigna como exposición independiente.

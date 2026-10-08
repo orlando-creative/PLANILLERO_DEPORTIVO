@@ -702,6 +702,35 @@
       color: var(--color-verde-oscuro);
     }
 
+    .notificaciones {
+      position: fixed;
+      z-index: 1000;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      gap: 10px;
+      width: min(440px, calc(100vw - 32px));
+    }
+
+    .notificacion {
+      padding: 14px 16px;
+      border: 1px solid #c9d9ce;
+      border-left: 5px solid var(--color-verde);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--color-texto);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .2);
+      font-size: .92rem;
+      white-space: pre-line;
+    }
+
+    .notificacion-error {
+      border-color: #f2c6bf;
+      border-left-color: var(--color-rojo);
+      background: #fff8f6;
+      color: var(--color-rojo);
+    }
+
     /* --------------------------------------------------------------------------
     13. PIE DE PAGINA (FOOTER)
     -------------------------------------------------------------------------- */

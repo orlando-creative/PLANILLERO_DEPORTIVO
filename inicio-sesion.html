@@ -7,7 +7,25 @@
     <link rel="stylesheet" href="css/estilos.css" />
   </head>
   <body>
-    <header></header>
+    <header>
+      <div class="header-top">U.E. "Luz del Mundo A" · Campeonato de Futsal 2026</div>
+      <div class="header-main">
+        <div class="contenedor header-bar">
+          <a href="index.html" class="marca">
+            <img src="assets/escudo-luz-del-mundo.svg" alt="Escudo">
+            <div class="marca-tit">PLANILLERO <span>FUTSAL</span></div>
+          </a>
+          <nav class="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="sanciones.html">Sanciones</a>
+            <a href="reglamento.html">Reglamento</a>
+            <a href="administracion.html" class="admin-link" id="nav-admin" hidden>Mesa de Planilla</a>
+            <a href="inicio-sesion.html" class="btn btn-sm btn-out" id="nav-login" style="color:#fff;border-color:#fff">Acceso Admin</a>
+            <button type="button" class="btn btn-sm btn-red" id="btn-logout" hidden>Salir</button>
+          </nav>
+        </div>
+      </div>
+    </header>
     <main class="contenedor" style="max-width:480px; margin-top:30px">
       <div class="panel">
         <h2 style="text-align:center">Acceso del Administrador</h2>
@@ -30,14 +48,21 @@
         <p style="text-align:center; margin-top:16px"><a href="index.html" style="color:var(--muted); font-size:.85rem">Volver al inicio</a></p>
       </div>
     </main>
-    <footer></footer>
+    <footer>
+      <div class="contenedor">
+        <p><strong>U.E. Luz del Mundo A · Planillero Oficial de Futsal</strong></p>
+        <p style="margin-top:6px">
+          <a href="index.html">Inicio</a> · <a href="sanciones.html">Sanciones</a> · <a href="reglamento.html">Reglamento</a>
+          · <a href="administracion.html" id="footer-admin" hidden>Mesa de Planilla</a>
+        </p>
+      </div>
+    </footer>
 
     <script type="module">
-      import { montarNavegacion } from './js/app.js';
       import { iniciarSesion } from './js/supabase.js';
-      montarNavegacion();
+      import { avisar, sincronizarNavegacion } from './js/app.js';
+      sincronizarNavegacion();
 
-      const aviso = document.getElementById('aviso-login');
       // Valida las credenciales y muestra el resultado del inicio de sesión.
       document.getElementById('form-login').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -48,9 +73,7 @@
           await iniciarSesion(document.getElementById('correo').value, document.getElementById('password').value);
           window.location.href = 'administracion.html';
         } catch (err) {
-          aviso.textContent = err.message || 'Error al iniciar sesión';
-          aviso.className = 'aviso aviso-error';
-          aviso.hidden = false;
+          avisar('aviso-login', err.message || 'Error al iniciar sesión', true);
           btn.disabled = false;
           btn.textContent = 'Ingresar a la Planilla';
         }
