@@ -478,18 +478,6 @@ export async function iniciarAdmin() {
     partidosUI.renderRegistro();
     avisar('aviso-admin', 'Incidencia eliminada y marcador actualizado.');
   };
-  // Deshace el gol más reciente del equipo mediante el flujo normal de eliminación.
-  const restarUltimoGolEquipo = async (equipoId) => {
-    if (!pActivo) return;
-    // Busca el último gol registrado para este equipo en los eventos ya cargados.
-    const golesEquipo = eventos.filter((e) => e.tipo === 'gol' && e.equipo_id === equipoId);
-    if (!golesEquipo.length) {
-      alert('Este equipo no tiene goles registrados para restar.');
-      return;
-    }
-    const ultimoGol = golesEquipo[golesEquipo.length - 1];
-    await eliminarIncidencia(ultimoGol.id);
-  };
   // Los controladores siguientes registran goles y tarjetas de ambos equipos.
   document.getElementById('btn-inc-gol-local')?.addEventListener('click', () => {
     if (!pActivo) return;
@@ -526,27 +514,6 @@ export async function iniciarAdmin() {
     registrarIncidencia(pActivo.equipo_visitante_id, 'roja', jId);
   });
   // Estos botones ofrecen ajustes rápidos de marcador, pero crean o quitan eventos reales.
-  document.getElementById('btn-gol-local-mas')?.addEventListener('click', () => {
-    if (!pActivo) return;
-    const jId = document.getElementById('s-jugador-local')?.value || null;
-    registrarIncidencia(pActivo.equipo_local_id, 'gol', jId);
-  });
-
-  document.getElementById('btn-gol-local-menos')?.addEventListener('click', () => {
-    if (!pActivo) return;
-    restarUltimoGolEquipo(pActivo.equipo_local_id);
-  });
-
-  document.getElementById('btn-gol-visita-mas')?.addEventListener('click', () => {
-    if (!pActivo) return;
-    const jId = document.getElementById('s-jugador-visita')?.value || null;
-    registrarIncidencia(pActivo.equipo_visitante_id, 'gol', jId);
-  });
-
-  document.getElementById('btn-gol-visita-menos')?.addEventListener('click', () => {
-    if (!pActivo) return;
-    restarUltimoGolEquipo(pActivo.equipo_visitante_id);
-  });
   // Controladores del cronómetro: iniciar, pausar, avanzar y finalizar el partido.
   document.getElementById('btn-reloj-ini')?.addEventListener('click', async () => {
     if (!pActivo) return;
