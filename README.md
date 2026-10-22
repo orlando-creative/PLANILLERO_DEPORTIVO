@@ -155,6 +155,7 @@ El proyecto es estático y contiene una configuración de Vercel en [vercel.json
 ## Guías para estudiar y exponer
 
 - [README_EXPOSICION.md](./README_EXPOSICION.md) contiene el reparto para tres estudiantes, el vocabulario de funciones y una explicación de los módulos.
+- [README_BASE_DATOS_EXPOSICION.md](./README_BASE_DATOS_EXPOSICION.md) contiene una exposición detallada de Supabase, el modelo de datos y la autenticación, repartida entre tres personas.
 - [README_PRACTICA.md](./README_PRACTICA.md) detalla cómo presentar la construcción de los botones para eliminar equipos, reiniciar el campeonato e iniciar el tiempo extra.
 
 El cliente técnico [js/supabase.js](./js/supabase.js) es compartido por los módulos y no se asigna como exposición independiente.

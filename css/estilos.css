@@ -1,21 +1,27 @@
-    /* //HOJA DE ESTILOS PRINCIPAL - PLANILLERO DEPORTIVO */
+    @font-face {
+      font-family: "Eurostile SportSys";
+      src: url("../assets/Eurostile%20LT%20Bold%20Italic.ttf") format("truetype");
+      font-style: italic;
+      font-weight: 700;
+      font-display: swap;
+    }
 
     :root {
       /* Tipografia y textos */
-      --color-texto: #162621;
-      --color-texto-secundario: #5e6f68;
+      --color-texto: #171a16;
+      --color-texto-secundario: #62685f;
 
       /* Fondos y superficies */
-      --color-fondo: #f4f6f0;
-      --color-blanco: #ffffff;
+      --color-fondo: #fcfcfc;
+      --color-blanco: #fcfcfc;
 
       /* Identidad deportiva institucional */
-      --color-verde: #176b50;
-      --color-verde-oscuro: #0e4936;
-      --color-lima: #d5ef63;
+      --color-verde: #80d814;
+      --color-verde-oscuro: #151813;
+      --color-lima: #80d814;
 
       /* Separadores y bordes */
-      --color-borde: #d2ddd5;
+      --color-borde: #e1e5dd;
 
       /* Alertas, tarjetas y estados */
       --color-rojo: #c0392b;
@@ -37,10 +43,18 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-family: "Trebuchet MS", Arial, sans-serif;
       background-color: var(--color-fondo);
       color: var(--color-texto);
       line-height: 1.45;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Eurostile SportSys", "Arial Black", "Trebuchet MS", Arial, sans-serif;
+      font-style: italic;
+      font-weight: 700;
     }
 
     /* --------------------------------------------------------------------------
@@ -55,19 +69,10 @@
     /* --------------------------------------------------------------------------
     4. ENCABEZADO Y NAVEGACION
     -------------------------------------------------------------------------- */
-    .header-top {
-      background-color: var(--color-verde-oscuro);
-      color: #cdecd8;
-      font-size: 0.8rem;
-      padding: 6px 0;
-      text-align: center;
-      font-weight: 600;
-    }
-
     .header-main {
-      background-color: var(--color-verde);
+      background-color: #10120f;
       color: var(--color-blanco);
-      border-bottom: 3px solid var(--color-lima);
+      border-bottom: 3px solid var(--color-verde);
       padding: 12px 0;
     }
 
@@ -82,24 +87,29 @@
     .marca {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 4px;
       text-decoration: none;
       color: var(--color-blanco);
     }
 
     .marca img {
-      width: 36px;
-      height: 36px;
+      display: block;
+      width: 145px;
+      height: auto;
     }
 
     .marca-tit {
-      font-size: 1.15rem;
+      display: block;
+      margin-left: -50px;
+      font-family: "Eurostile SportSys", "Arial Black", "Trebuchet MS", Arial, sans-serif;
+      font-size: 1.7rem;
       font-weight: 800;
+      font-style: italic;
       letter-spacing: 0.5px;
     }
 
     .marca-tit span {
-      color: var(--color-lima);
+      color: var(--color-verde);
     }
 
     .nav-links {
@@ -110,7 +120,7 @@
     }
 
     .nav-links a {
-      color: #e4f4ea;
+      color: #e6e9e2;
       text-decoration: none;
       padding: 6px 12px;
       border-radius: 4px;
@@ -121,14 +131,14 @@
 
     .nav-links a:hover,
     .nav-links a.activo {
-      background-color: rgba(255, 255, 255, 0.18);
+      background-color: rgba(128, 216, 20, 0.18);
       color: var(--color-blanco);
     }
 
     .nav-links .admin-link {
-      background-color: #0b3d2c;
-      border: 1px solid var(--color-lima);
-      color: var(--color-lima);
+      background-color: var(--color-verde);
+      border: 1px solid var(--color-verde);
+      color: #151813;
     }
 
     /* --------------------------------------------------------------------------
@@ -362,17 +372,19 @@
       border: 0;
       border-radius: 5px;
       background-color: var(--color-verde);
-      color: var(--color-blanco);
+      color: #151813;
       font: inherit;
       font-size: 0.86rem;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 0.15s ease;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
     }
 
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       background-color: var(--color-verde-oscuro);
+      color: var(--color-blanco);
+      transform: translateY(-1px);
     }
 
     .btn-sm {
@@ -388,7 +400,20 @@
     }
 
     .btn-out:hover {
-      background-color: #eaf3ed;
+      background-color: var(--color-verde);
+      border-color: var(--color-verde);
+      color: #151813;
+    }
+
+    .header-main .nav-links .btn-out {
+      color: var(--color-blanco);
+      border-color: var(--color-blanco);
+    }
+
+    .header-main .nav-links .btn-out:hover {
+      background-color: var(--color-verde);
+      border-color: var(--color-verde);
+      color: #151813;
     }
 
     .btn-red {
@@ -735,8 +760,8 @@
     13. PIE DE PAGINA (FOOTER)
     -------------------------------------------------------------------------- */
     footer {
-      background-color: var(--color-verde-oscuro);
-      color: #cdecd8;
+      background-color: #10120f;
+      color: #e6e9e2;
       text-align: center;
       padding: 18px 0;
       font-size: 0.82rem;
@@ -744,7 +769,7 @@
     }
 
     footer a {
-      color: var(--color-lima);
+      color: var(--color-verde);
       text-decoration: none;
       margin: 0 6px;
     }
@@ -1092,7 +1117,7 @@
 
     .btn-inc-gol {
       background: var(--color-verde);
-      color: #ffffff;
+      color: #151813;
       border: none;
       border-radius: 6px;
       transition: background 0.15s;
