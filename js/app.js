@@ -105,7 +105,7 @@ export async function iniciarIndex() {
             <td data-label="Partido y Resultado"><span class="resultado-partido">${icono('soccer-field-470.svg', 'Cancha', 'mini-asset')}${esc(names[match.equipo_local_id])}
               <strong>${match.goles_local} - ${match.goles_visitante}</strong>
               ${esc(names[match.equipo_visitante_id])}</span>${penales}</td>
-            <td data-label="Categoría / Rama">${icono('soccer-ball-10232.svg', 'Balón', 'mini-asset')} ${esc(match.categoria)} (${esc(match.genero)})</td>
+            <td data-label="Categoría / Rama"> ${esc(match.categoria)} (${esc(match.genero)})</td>
             <td data-label="Estado"><span class="${tagEstado(match.estado)}">${esc(match.estado.replace('_', ' '))}</span></td>
           </tr>`;
       }).join('');
