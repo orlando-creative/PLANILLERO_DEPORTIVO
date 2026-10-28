@@ -1,5 +1,5 @@
 import { guardar, actualizar, borrar } from './supabase.js';
-import { esc, avisar } from './app.js';
+import { esc, avisar, icono } from './app.js';
 
 // Prepara las vistas y acciones de equipos usando los datos del panel principal.
 export function crearModuloEquipos({ datos, cargar, cerrarPlanilla }) {
@@ -11,15 +11,15 @@ export function crearModuloEquipos({ datos, cargar, cerrarPlanilla }) {
     container.innerHTML = equipos.length ? equipos.map((equipo) => {
       const integrantes = jugadores.filter((jugador) => jugador.equipo_id === equipo.id);
       return `<article class="equipo-admin-card">
-        <div class="equipo-admin-header"><div>
-          <strong>${esc(equipo.nombre)}</strong>
-          <small>${esc(equipo.categoria)} · ${esc(equipo.genero)} · ${integrantes.length} jugador${integrantes.length === 1 ? '' : 'es'}</small>
+        <div class="equipo-admin-header"><div class="equipo-nombre-wrap">
+          ${icono('soccer-player-red.svg', 'Equipo', 'mini-asset')} <strong>${esc(equipo.nombre)}</strong>
+          <small>${icono('soccer-ball-10232.svg', 'Categoría', 'mini-asset')} ${esc(equipo.categoria)} · ${esc(equipo.genero)} · ${integrantes.length} jugador${integrantes.length === 1 ? '' : 'es'}</small>
         </div><label class="pago-equipo">
           <input type="checkbox" data-inscripcion="${equipo.id}" ${equipo.inscripcion_pagada ? 'checked' : ''}>
           <span>Inscripción ${equipo.inscripcion_pagada ? 'pagada' : 'pendiente'}</span>
         </label></div>
         <ul class="equipo-admin-integrantes">${integrantes.map((jugador) =>
-          `<li><span>${jugador.dorsal ? `#${jugador.dorsal} ` : ''}${esc(jugador.nombre)}</span>
+          `<li><span>${icono('soccer-player-blue.svg', 'Jugador', 'mini-asset')} ${jugador.dorsal ? `#${jugador.dorsal} ` : ''}${esc(jugador.nombre)}</span>
           <button type="button" class="btn btn-sm btn-out" data-editar-jugador="${jugador.id}">Editar</button></li>`
         ).join('') || '<li class="muted">Sin jugadores</li>'}</ul>
         <details class="equipo-agregar-jugador"><summary>+ Añadir jugador</summary>

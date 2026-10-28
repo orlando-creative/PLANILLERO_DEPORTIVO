@@ -1,7 +1,7 @@
 import {
   guardar, actualizar, borrar, reiniciarCampeonato
 } from './supabase.js';
-import { esc, fmtFecha, avisar } from './app.js';
+import { esc, fmtFecha, avisar, icono } from './app.js';
 
 // Prepara la programación, el registro y las acciones de administración de partidos.
 export function crearModuloPartidos({ datos, cargar, abrirPlanilla, cerrarPlanilla, jugadorSuspendido }) {
@@ -68,12 +68,12 @@ export function crearModuloPartidos({ datos, cargar, abrirPlanilla, cerrarPlanil
         ? `<small class="registro-penales">Penales: ${partido.penales_local} - ${partido.penales_visitante}</small>` : '';
       return `<article class="registro-partido">
         <div class="registro-partido-info">
-          <strong class="registro-partido-marcador">${esc(names[partido.equipo_local_id] || 'Local')}
+          <strong class="registro-partido-marcador">${icono('soccer-player-red.svg', 'Equipo local', 'mini-asset')}${esc(names[partido.equipo_local_id] || 'Local')}
             <span>${partido.goles_local} - ${partido.goles_visitante}</span>
-            ${esc(names[partido.equipo_visitante_id] || 'Visitante')}</strong>
+            ${esc(names[partido.equipo_visitante_id] || 'Visitante')}${icono('soccer-player-blue.svg', 'Equipo visitante', 'mini-asset')}</strong>
           ${penales}
-          <small class="registro-pagos-arbitraje">Arbitraje: ${esc(names[partido.equipo_local_id] || 'Local')} ${partido.arbitraje_local_pagado ? 'pagó' : 'no pagó'} · ${esc(names[partido.equipo_visitante_id] || 'Visitante')} ${partido.arbitraje_visitante_pagado ? 'pagó' : 'no pagó'}</small>
-          <small class="registro-partido-meta">${esc(partido.fase)} · ${esc(partido.categoria)} (${esc(partido.genero)}) · ${fmtFecha(partido.fecha_hora)}</small>
+          <small class="registro-pagos-arbitraje">${icono('winner-488.svg', 'Arbitraje', 'mini-asset')} Arbitraje: ${esc(names[partido.equipo_local_id] || 'Local')} ${partido.arbitraje_local_pagado ? 'pagó' : 'no pagó'} · ${esc(names[partido.equipo_visitante_id] || 'Visitante')} ${partido.arbitraje_visitante_pagado ? 'pagó' : 'no pagó'}</small>
+          <small class="registro-partido-meta">${icono('soccer-field-470.svg', 'Cancha', 'mini-asset')} ${esc(partido.fase)} · ${esc(partido.categoria)} (${esc(partido.genero)}) · ${fmtFecha(partido.fecha_hora)}</small>
         </div>
         <div class="registro-partido-acciones"><span class="tag tag-${clase}">${esc(estado)}</span>
         <button class="btn btn-sm" data-abrir-reg="${partido.id}">Abrir Planilla</button>

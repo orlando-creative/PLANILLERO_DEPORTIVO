@@ -7,27 +7,28 @@ import {
 import { crearModuloPartidos } from './app-partidos.js';
 import { crearModuloEquipos } from './app-equipos.js';
 
+const $ = (id) => document.getElementById(id);
+const setText = (id, value) => { const el = $(id); if (el) el.textContent = value; return el; };
+
 // Actualiza el reloj y habilita controles según el estado y periodo del partido.
 const renderizarReloj = (partido, segundos, penales) => {
-  const reloj = document.getElementById('reloj-num');
+  const reloj = $('#reloj-num');
   if (!reloj || !partido) return;
   reloj.textContent = fmtReloj(segundos);
   const periodo = partido.periodo === 3 ? 'TIEMPO EXTRA' : partido.periodo === 4 ? 'PENALES' : `${partido.periodo}° TIEMPO`;
-  document.getElementById('reloj-periodo').textContent =
-    `${periodo} (${partido.estado.replace(/_/g, ' ').toUpperCase()})`;
+  setText('reloj-periodo', `${periodo} (${partido.estado.replace(/_/g, ' ').toUpperCase()})`);
   // Habilita cada control únicamente cuando la situación del encuentro lo permite.
   const fin = partido.estado === 'finalizado';
   const enJuego = ['en_juego', 'tiempo_extra'].includes(partido.estado);
   const puedeProrroga = partido.periodo === 2 && partido.estado === 'descanso' && segundos === 0 &&
     partido.goles_local === partido.goles_visitante;
-  document.getElementById('btn-reloj-ini').disabled = fin || partido.estado === 'penales' || segundos === 0;
-  document.getElementById('btn-reloj-pau').disabled = fin || !enJuego;
-  document.getElementById('btn-reloj-2t').disabled =
-    fin || partido.periodo !== 1 || partido.estado !== 'descanso' || segundos > 0;
-  document.getElementById('btn-reloj-extra').disabled = fin || !puedeProrroga;
-  document.getElementById('btn-toggle-penales').disabled = fin || partido.estado !== 'penales';
-  document.getElementById('btn-reloj-fin').disabled = fin || partido.periodo < 2 || enJuego ||
-    segundos > 0 || (partido.estado === 'penales' && !penales.ganador());
+  const btn = (id) => $(id);
+  btn('btn-reloj-ini').disabled = fin || partido.estado === 'penales' || segundos === 0;
+  btn('btn-reloj-pau').disabled = fin || !enJuego;
+  btn('btn-reloj-2t').disabled = fin || partido.periodo !== 1 || partido.estado !== 'descanso' || segundos > 0;
+  btn('btn-reloj-extra').disabled = fin || !puedeProrroga;
+  btn('btn-toggle-penales').disabled = fin || partido.estado !== 'penales';
+  btn('btn-reloj-fin').disabled = fin || partido.periodo < 2 || enJuego || segundos > 0 || (partido.estado === 'penales' && !penales.ganador());
 };
 
 // Agrupa la lógica de la tanda: turnos, tiros, resultado y persistencia.
@@ -70,21 +71,21 @@ const crearModuloPenales = ({ partido, equipos, actualizar, reloj }) => {
     if (!match) return;
     // El marcador de la tanda cuenta únicamente los tiros convertidos en gol.
     const goles = [local, visitante].map((tiros) => tiros.filter((tiro) => tiro === 'gol').length);
-    document.getElementById('penales-score-local').textContent = goles[0];
-    document.getElementById('penales-score-visita').textContent = goles[1];
-    document.getElementById('penales-total-local').textContent = `${goles[0]} goles`;
-    document.getElementById('penales-total-visita').textContent = `${goles[1]} goles`;
-    const badge = document.getElementById('marcador-penales-badge');
+    setText('penales-score-local', goles[0]);
+    setText('penales-score-visita', goles[1]);
+    setText('penales-total-local', `${goles[0]} goles`);
+    setText('penales-total-visita', `${goles[1]} goles`);
+    const badge = $('#marcador-penales-badge');
     badge.hidden = !activo;
-    if (activo) document.getElementById('txt-marcador-penales').textContent = `Penales: ${goles[0]} - ${goles[1]}`;
+    if (activo) setText('txt-marcador-penales', `Penales: ${goles[0]} - ${goles[1]}`);
     const maxTiros = Math.max(5, local.length + 1, visitante.length + 1);
     [['local', local], ['visita', visitante]].forEach(([lado, tiros]) => {
-      document.getElementById(`indicadores-penales-${lado}`).innerHTML =
-        Array.from({ length: maxTiros }, (_, index) => {
-          const tiro = tiros[index];
-          const clase = tiro === 'gol' ? 'tiro-gol' : tiro === 'fallo' ? 'tiro-fallo' : 'tiro-pendiente';
-          return `<div class="tiro-slot ${clase}">${tiro === 'gol' ? 'G' : tiro === 'fallo' ? 'X' : index + 1}</div>`;
-        }).join('');
+      const panel = $('#indicadores-penales-' + lado);
+      panel.innerHTML = Array.from({ length: maxTiros }, (_, index) => {
+        const tiro = tiros[index];
+        const clase = tiro === 'gol' ? 'tiro-gol' : tiro === 'fallo' ? 'tiro-fallo' : 'tiro-pendiente';
+        return `<div class="tiro-slot ${clase}">${tiro === 'gol' ? 'G' : tiro === 'fallo' ? 'X' : index + 1}</div>`;
+      }).join('');
     });
     const botones = ['btn-penal-local-gol', 'btn-penal-local-fallo', 'btn-penal-visita-gol', 'btn-penal-visita-fallo']
       .map((id) => document.getElementById(id));
@@ -358,6 +359,11 @@ export async function iniciarAdmin() {
     document.getElementById('mar-gol-visita').textContent = pActivo.goles_visitante;
     document.getElementById('mar-cap-local').textContent = capLoc ? `(C) ${capLoc.nombre}` : 'Sin capitán';
     document.getElementById('mar-cap-visita').textContent = capVis ? `(C) ${capVis.nombre}` : 'Sin capitán';
+    // El marcador principal combina el resultado con iconos de equipo para distinguir local y visitante al instante.
+    const marcadorLocal = document.getElementById('mar-nom-local');
+    const marcadorVisita = document.getElementById('mar-nom-visita');
+    if (marcadorLocal) marcadorLocal.innerHTML = '<img src="assets/soccer-player-red.svg" alt="Equipo local" class="asset-inline mini-asset" loading="lazy"> ' + nomLoc;
+    if (marcadorVisita) marcadorVisita.innerHTML = '<img src="assets/soccer-player-blue.svg" alt="Equipo visitante" class="asset-inline mini-asset" loading="lazy"> ' + nomVis;
     document.getElementById('pago-arbitraje-nombre-local').textContent = nomLoc;
     document.getElementById('pago-arbitraje-nombre-visita').textContent = nomVis;
     document.getElementById('chk-arbitraje-local').checked = Boolean(pActivo.arbitraje_local_pagado);
@@ -391,19 +397,25 @@ export async function iniciarAdmin() {
     // Resume tarjetas y goles y presenta el historial en orden del más reciente al más antiguo.
     const totalAmarillas = eventos.filter((e) => e.tipo === 'amarilla').length;
     const totalRojas = eventos.filter((e) => e.tipo === 'roja').length;
-    const statsCont = document.getElementById('stats-partido-badges');
+      const statsCont = document.getElementById('stats-partido-badges');
     if (statsCont) {
-      statsCont.innerHTML = `
-        <span class="badge-stat-pill">Total Goles: ${pActivo.goles_local + pActivo.goles_visitante}</span>
-        <span class="badge-stat-pill" style="background:#fef9e7;color:#7d6608">Amarillas: ${totalAmarillas}</span>
-        <span class="badge-stat-pill" style="background:#fdedec;color:#78281f">Rojas: ${totalRojas}</span>
-      `;
-    }
+        // Los resumenes del encuentro usan iconos para que el estado del partido sea inmediato.
+        statsCont.innerHTML = `
+          <span class="badge-stat-pill"><img src="assets/goal-491.svg" alt="Goles" class="asset-inline mini-asset"> Total Goles: ${pActivo.goles_local + pActivo.goles_visitante}</span>
+          <span class="badge-stat-pill" style="background:#fef9e7;color:#7d6608"><img src="assets/yellow-card-489.svg" alt="Amarillas" class="asset-inline mini-asset"> Amarillas: ${totalAmarillas}</span>
+          <span class="badge-stat-pill" style="background:#fdedec;color:#78281f"><img src="assets/red-card-460.svg" alt="Rojas" class="asset-inline mini-asset"> Rojas: ${totalRojas}</span>
+        `;
+      }
     const listaEv = document.getElementById('lista-eventos-planilla');
+    // Cada evento del partido lleva un icono orientado a la incidencia para que sea legible de un vistazo.
+    const iconoEvento = (tipo) => {
+      if (tipo === 'gol') return '<img src="assets/goal-491.svg" alt="Gol" class="asset-inline event-icon" loading="lazy">';
+      if (tipo === 'amarilla') return '<img src="assets/yellow-card-489.svg" alt="Tarjeta amarilla" class="asset-inline event-icon" loading="lazy">';
+      return '<img src="assets/red-card-460.svg" alt="Tarjeta roja" class="asset-inline event-icon" loading="lazy">';
+    };
     listaEv.innerHTML = eventos.length ? [...eventos].reverse().map((ev) => {
       const j = jugadores.find((x) => x.id === ev.jugador_id);
       const eq = equipos.find((x) => x.id === ev.equipo_id);
-      const icono = ev.tipo === 'gol' ? '[GOL]' : ev.tipo === 'amarilla' ? '[AMARILLA]' : '[ROJA]';
       const esLocal = ev.equipo_id === pActivo.equipo_local_id;
       const etiquetaLado = esLocal ? 'LOCAL' : 'VISITANTE';
       const nombreJugador = j ? (j.dorsal ? `#${j.dorsal} ${j.nombre}` : j.nombre) : 'Gol de Equipo';
@@ -411,7 +423,7 @@ export async function iniciarAdmin() {
       return `
         <li>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
-            <span style="font-size:1.1rem">${icono}</span>
+            ${iconoEvento(ev.tipo)}
             <span class="badge-lado ${esLocal ? 'local' : 'visita'}" style="font-size:0.68rem">${etiquetaLado}</span>
             <strong>${esc(nombreJugador)}</strong>
             <span class="muted" style="font-size:0.8rem">(${esc(eq?.nombre || 'Equipo')})</span>

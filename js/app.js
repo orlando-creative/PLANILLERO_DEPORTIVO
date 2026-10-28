@@ -1,5 +1,9 @@
 import { leer, actualizar, obtenerUsuario, esAdmin, cerrarSesion } from './supabase.js';
 
+const tagEstado = (estado) => `tag tag-${estado === 'en_juego' ? 'juego' : estado === 'finalizado' ? 'fin' : 'prog'}`;
+const rowVacia = (colspan, mensaje) => `<tr><td colspan="${colspan}" class="empty">${esc(mensaje)}</td></tr>`;
+export const icono = (nombre, alt, clase = '') => `<img src="assets/${nombre}" alt="${alt}" class="asset-inline ${clase}" loading="lazy">`;
+
 // Helpers, páginas públicas y módulos de administración.
 // Escapa texto usando el DOM para que los datos se muestren y no se ejecuten como HTML.
 export const esc = (text) => {
@@ -77,7 +81,7 @@ export async function iniciarIndex() {
     ]);
     const categoria = document.getElementById('filtro-cat');
     const genero = document.getElementById('filtro-gen');
-    // Construye categorías únicas a partir de los equipos recibidos.
+    // Construye el filtro por categoría a partir de los equipos disponibles.
     categoria.innerHTML = '<option value="">Todas las categorías</option>' +
       [...new Set(equipos.map((team) => team.categoria).filter(Boolean))].sort()
         .map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
@@ -90,42 +94,41 @@ export async function iniciarIndex() {
       // Comprueba si un partido, posición o goleador coincide con los filtros.
       const visible = (row) => (!cat || row.categoria === cat) && (!gen || row.genero === gen);
       const filteredMatches = partidos.filter(visible);
-      document.getElementById('tbody-partidos').innerHTML = filteredMatches.length
-        ? filteredMatches.map((match) => {
-          const penales = match.penales_local != null && match.penales_visitante != null
-            ? `<small class="resultado-penales">Penales: ${match.penales_local} - ${match.penales_visitante}</small>` : '';
-          return `
+      // Recorre cada encuentro y arma la fila con iconos de cancha, balón y estado.
+      const matches = filteredMatches.map((match) => {
+        const penales = match.penales_local != null && match.penales_visitante != null
+          ? `<small class="resultado-penales">Penales: ${match.penales_local} - ${match.penales_visitante}</small>` : '';
+        return `
           <tr>
             <td data-label="Fecha y Hora">${fmtFecha(match.fecha_hora)}</td>
             <td data-label="Fase"><strong>${esc(match.fase)}</strong></td>
-            <td data-label="Partido y Resultado"><span class="resultado-partido">${esc(names[match.equipo_local_id])}
+            <td data-label="Partido y Resultado"><span class="resultado-partido">${icono('soccer-field-470.svg', 'Cancha', 'mini-asset')}${esc(names[match.equipo_local_id])}
               <strong>${match.goles_local} - ${match.goles_visitante}</strong>
               ${esc(names[match.equipo_visitante_id])}</span>${penales}</td>
-            <td data-label="Categoría / Rama">${esc(match.categoria)} (${esc(match.genero)})</td>
-            <td data-label="Estado"><span class="tag tag-${match.estado === 'en_juego' ? 'juego' : match.estado === 'finalizado' ? 'fin' : 'prog'}">${esc(match.estado.replace('_', ' '))}</span></td>
+            <td data-label="Categoría / Rama">${icono('soccer-ball-10232.svg', 'Balón', 'mini-asset')} ${esc(match.categoria)} (${esc(match.genero)})</td>
+            <td data-label="Estado"><span class="${tagEstado(match.estado)}">${esc(match.estado.replace('_', ' '))}</span></td>
           </tr>`;
-        }).join('')
-        : '<tr><td colspan="5" class="empty">No hay partidos con los filtros seleccionados.</td></tr>';
+      }).join('');
+      document.getElementById('tbody-partidos').innerHTML = filteredMatches.length ? matches : rowVacia(5, 'No hay partidos con los filtros seleccionados.');
 
-      // Ordena la clasificación por puntos y usa goles como desempate.
-      const standings = posiciones.filter(visible)
-        .sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+      // Ordena la tabla de posiciones y alinea el valor de cada equipo con iconos deportivos.
+      const standings = posiciones.filter(visible).sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
       document.getElementById('tbody-posiciones').innerHTML = standings.length
         ? standings.map((row, index) => `
           <tr><td><strong>${index + 1}</strong></td><td><strong>${esc(row.equipo)}</strong></td>
-          <td>${esc(row.categoria)} (${esc(row.genero)})</td><td>${row.pj}</td><td>${row.pg}-${row.pe}-${row.pp}</td>
+          <td>${icono('soccer-ball-10232.svg', 'Balón', 'mini-asset')} ${esc(row.categoria)} (${esc(row.genero)})</td><td>${row.pj}</td><td>${row.pg}-${row.pe}-${row.pp}</td>
           <td>${row.gf}:${row.gc}</td><td>${row.dg > 0 ? `+${row.dg}` : row.dg}</td>
           <td><strong style="color:var(--color-verde)">${row.pts}</strong></td></tr>`).join('')
-        : '<tr><td colspan="8" class="empty">Aún no hay partidos finalizados.</td></tr>';
+        : rowVacia(8, 'Aún no hay partidos finalizados.');
 
-      // Presenta los diez máximos goleadores que cumplen con los filtros.
+      // Muestra los goleadores principales con iconografía de jugador, cancha y gol.
       const scorers = goleadores.filter(visible).sort((a, b) => b.goles - a.goles).slice(0, 10);
       document.getElementById('tbody-goleadores').innerHTML = scorers.length
         ? scorers.map((row, index) => `
           <tr><td><strong>${index + 1}</strong></td><td><strong>${esc(row.jugador)}</strong> ${row.dorsal ? `(#${row.dorsal})` : ''}</td>
-          <td>${esc(row.equipo)}</td><td>${esc(row.categoria)} (${esc(row.genero)})</td>
-          <td><strong style="color:var(--color-verde)">${row.goles} goles</strong></td></tr>`).join('')
-        : '<tr><td colspan="5" class="empty">Aún no se registraron goles.</td></tr>';
+          <td>${icono('soccer-player-blue.svg', 'Equipo', 'mini-asset')} ${esc(row.equipo)}</td><td>${icono('soccer-field-470.svg', 'Categoría', 'mini-asset')} ${esc(row.categoria)} (${esc(row.genero)})</td>
+          <td><strong style="color:var(--color-verde)">${icono('goal-491.svg', 'Goles', 'mini-asset goal-row-icon')}${row.goles} goles</strong></td></tr>`).join('')
+        : rowVacia(5, 'Aún no se registraron goles.');
     };
     categoria.onchange = render;
     genero.onchange = render;
@@ -149,7 +152,6 @@ export async function iniciarSanciones() {
     const matches = Object.fromEntries(partidos.map((row) => [row.id, row]));
     const tbody = document.getElementById('tbody-sanciones');
 
-    // Cada fila combina la sanción con su jugador, equipo y partido relacionados.
     tbody.innerHTML = sanciones.length ? sanciones.map((sanction) => {
       const player = players[sanction.jugador_id];
       const match = matches[sanction.partido_id];
@@ -168,9 +170,9 @@ export async function iniciarSanciones() {
         <td><span class="badge-tarj ${sanction.tarjeta}"></span> <strong>[${esc(sanction.tarjeta.toUpperCase())}]</strong></td>
         <td><small>${esc(game)}</small></td>
         <td><strong>${sanction.pagada ? 'Sí' : 'No'}</strong></td>
-        <td><span class="tag tag-${sanction.estado === 'suspendida' ? 'juego' : 'prog'}">${esc(sanction.estado)}</span></td>
+        <td><span class="${tagEstado(sanction.estado === 'suspendida' ? 'en_juego' : 'prog')}">${esc(sanction.estado)}</span></td>
         ${adminControls}</tr>`;
-    }).join('') : '<tr><td colspan="7" class="empty">No hay sanciones registradas.</td></tr>';
+    }).join('') : rowVacia(7, 'No hay sanciones registradas.');
 
     if (admin) {
       document.getElementById('th-admin-sanciones')?.removeAttribute('hidden');

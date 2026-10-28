@@ -1,3 +1,5 @@
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
     @font-face {
       font-family: "Eurostile SportSys";
       src: url("../assets/Eurostile%20LT%20Bold%20Italic.ttf") format("truetype");
@@ -8,6 +10,8 @@
 
     :root {
       /* Tipografia y textos */
+      --font-principal: "Eurostile SportSys", "Arial Black", "Trebuchet MS", Arial, sans-serif;
+      --font-terciaria: "Montserrat", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       --color-texto: #171a16;
       --color-texto-secundario: #62685f;
 
@@ -43,7 +47,7 @@
     }
 
     body {
-      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-family: var(--font-terciaria);
       background-color: var(--color-fondo);
       color: var(--color-texto);
       line-height: 1.45;
@@ -52,9 +56,44 @@
     h1,
     h2,
     h3 {
-      font-family: "Eurostile SportSys", "Arial Black", "Trebuchet MS", Arial, sans-serif;
+      font-family: var(--font-principal);
       font-style: italic;
       font-weight: 700;
+    }
+
+    .asset-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .asset-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(128, 216, 20, 0.14), rgba(255,255,255,0.7));
+      border: 1px solid rgba(128, 216, 20, 0.32);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .asset-badge img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+    }
+
+    .isologo-bth {
+      width: 88px;
+      height: auto;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(128, 216, 20, 0.25);
+      padding: 6px;
     }
 
     /* --------------------------------------------------------------------------
@@ -73,7 +112,7 @@
       background-color: #10120f;
       color: var(--color-blanco);
       border-bottom: 3px solid var(--color-verde);
-      padding: 12px 0;
+      padding: 8px 0;
     }
 
     .header-bar {
@@ -82,6 +121,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
+      min-height: 52px;
     }
 
     .marca {
@@ -94,15 +134,15 @@
 
     .marca img {
       display: block;
-      width: 145px;
+      width: 120px;
       height: auto;
     }
 
     .marca-tit {
       display: block;
-      margin-left: -50px;
+      margin-left: -32px;
       font-family: "Eurostile SportSys", "Arial Black", "Trebuchet MS", Arial, sans-serif;
-      font-size: 1.7rem;
+      font-size: 1.45rem;
       font-weight: 800;
       font-style: italic;
       letter-spacing: 0.5px;
@@ -182,6 +222,23 @@
       margin-bottom: 10px;
       color: var(--color-verde-oscuro);
       font-size: 1.25rem;
+    }
+
+    .panel-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--color-verde-oscuro);
+      font-size: 1.25rem;
+    }
+
+    .panel-title img,
+    .panel-title .asset-inline {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
     .grid-2 {
@@ -483,6 +540,32 @@
       white-space: nowrap;
     }
 
+    .asset-inline {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mini-asset {
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
+    }
+
+    .goal-row-icon {
+      width: 15px;
+      height: 15px;
+      margin-right: 4px;
+    }
+
+    .event-icon {
+      width: 18px;
+      height: 18px;
+    }
+
     .resultado-penales,
     .registro-penales {
       display: block;
@@ -605,6 +688,26 @@
       border-radius: 3px;
       font-size: 0.72rem;
       font-weight: 800;
+    }
+
+    .badge-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: 1px solid rgba(128, 216, 20, 0.25);
+      background-color: #eefaf1;
+      color: #1a4726;
+    }
+
+    .badge-stat-pill img {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
     }
 
     /* --------------------------------------------------------------------------
