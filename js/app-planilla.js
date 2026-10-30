@@ -9,6 +9,7 @@ import { crearModuloEquipos } from './app-equipos.js';
 
 const $ = (id) => document.getElementById(id);
 const setText = (id, value) => { const el = $(id); if (el) el.textContent = value; return el; };
+const logReloj = (accion, detalle = {}) => { console.info('[reloj]', accion, detalle); };
 
 // Actualiza el reloj y habilita controles según el estado y periodo del partido.
 const renderizarReloj = (partido, segundos, penales) => {
@@ -20,15 +21,28 @@ const renderizarReloj = (partido, segundos, penales) => {
   // Habilita cada control únicamente cuando la situación del encuentro lo permite.
   const fin = partido.estado === 'finalizado';
   const enJuego = ['en_juego', 'tiempo_extra'].includes(partido.estado);
-  const puedeProrroga = partido.periodo === 2 && partido.estado === 'descanso' && segundos === 0 &&
+  const puedeProrroga = partido.periodo === 2 && (partido.estado === 'descanso' || partido.estado === 'en_juego') &&
     partido.goles_local === partido.goles_visitante;
-  const btn = (id) => $(id);
-  btn('btn-reloj-ini').disabled = fin || partido.estado === 'penales' || segundos === 0;
-  btn('btn-reloj-pau').disabled = fin || !enJuego;
-  btn('btn-reloj-2t').disabled = fin || partido.periodo !== 1 || partido.estado !== 'descanso' || segundos > 0;
-  btn('btn-reloj-extra').disabled = fin || !puedeProrroga;
-  btn('btn-toggle-penales').disabled = fin || partido.estado !== 'penales';
-  btn('btn-reloj-fin').disabled = fin || partido.periodo < 2 || enJuego || segundos > 0 || (partido.estado === 'penales' && !penales.ganador());
+  const btn = (id) => {
+    const el = $(id);
+    if (!el) console.warn(`[reloj] El botón ${id} no se encontró en el DOM.`);
+    return el;
+  };
+  const ini = btn('btn-reloj-ini');
+  if (ini) ini.disabled = fin || partido.estado === 'penales' || partido.estado === 'finalizado';
+  const pau = btn('btn-reloj-pau');
+  if (pau) pau.disabled = fin || !enJuego;
+  const dosT = btn('btn-reloj-2t');
+  if (dosT) dosT.disabled = fin || partido.periodo !== 1 || ['en_juego', 'tiempo_extra', 'penales'].includes(partido.estado);
+  const extra = btn('btn-reloj-extra');
+  if (extra) extra.disabled = fin || partido.periodo !== 2 || partido.estado === 'penales';
+  const penalesBtn = btn('btn-toggle-penales');
+  if (penalesBtn) penalesBtn.disabled = fin || partido.estado !== 'penales';
+  const finBtn = btn('btn-reloj-fin');
+  if (finBtn) finBtn.disabled = fin || partido.periodo < 2 || enJuego || segundos > 0 || (partido.estado === 'penales' && !penales.ganador());
+  if (partido.estado === 'programado' && partido.reloj_segundos === 60 && partido.periodo === 1) {
+    logReloj('estado inicial', { periodo: partido.periodo, estado: partido.estado, segundos });
+  }
 };
 
 // Agrupa la lógica de la tanda: turnos, tiros, resultado y persistencia.
@@ -529,7 +543,11 @@ export async function iniciarAdmin() {
   // Controladores del cronómetro: iniciar, pausar, avanzar y finalizar el partido.
   document.getElementById('btn-reloj-ini')?.addEventListener('click', async () => {
     if (!pActivo) return;
-    // Guarda el instante de inicio; el intervalo de pantalla calcula el tiempo transcurrido.
+    if (pActivo.estado === 'finalizado' || pActivo.estado === 'penales') {
+      avisar('aviso-admin', 'El partido ya está finalizado o en tanda de penales.', true);
+      return;
+    }
+    logReloj('iniciar o continuar', { partidoId: pActivo.id, periodo: pActivo.periodo, estado: pActivo.estado, segundos: segsActuales() });
     segsBase = segsActuales();
     tInicio = new Date().toISOString();
     const estadoJuego = pActivo.periodo === 3 ? 'tiempo_extra' : 'en_juego';
@@ -546,8 +564,8 @@ export async function iniciarAdmin() {
     if (!pActivo) return;
     if (ticker) clearInterval(ticker);
     ticker = null;
-    // Al pausar, persiste segundos restantes y elimina la marca de inicio.
     segsBase = segsActuales();
+    logReloj('pausar', { partidoId: pActivo.id, periodo: pActivo.periodo, estado: pActivo.estado, segundos: segsBase });
     await actualizar('partidos', pActivo.id, {
       estado: 'descanso', reloj_segundos: segsBase, reloj_iniciado_en: null
     });
@@ -559,14 +577,19 @@ export async function iniciarAdmin() {
   });
   document.getElementById('btn-reloj-2t')?.addEventListener('click', async () => {
     if (!pActivo) return;
-    if (pActivo.periodo !== 1 || pActivo.estado !== 'descanso' || segsActuales() !== 0) {
-      avisar('aviso-admin', 'El segundo tiempo comienza cuando termina el primero.', true);
+    if (pActivo.estado === 'finalizado' || pActivo.estado === 'penales') {
+      avisar('aviso-admin', 'No se puede avanzar desde un partido finalizado o con penales.', true);
       return;
     }
+    if (pActivo.periodo !== 1) {
+      avisar('aviso-admin', 'El segundo tiempo solo se inicia desde el primer periodo.', true);
+      return;
+    }
+    if (!confirm('¿Deseas saltar al segundo tiempo? Se reinicia el reloj del período y continúa desde ahí.')) return;
     if (ticker) clearInterval(ticker);
-    // El segundo tiempo empieza con el reloj reglamentario reiniciado.
     segsBase = 60;
     tInicio = new Date().toISOString();
+    logReloj('saltar a segundo tiempo', { partidoId: pActivo.id, segundos: segsBase });
     await actualizar('partidos', pActivo.id, {
       estado: 'en_juego', periodo: 2, reloj_segundos: 60, reloj_iniciado_en: tInicio
     });
@@ -608,20 +631,20 @@ export async function iniciarAdmin() {
   // Inicia la prórroga solo si el segundo tiempo terminó empatado.
   document.getElementById('btn-reloj-extra')?.addEventListener('click', async () => {
     if (!pActivo) return;
-    if (pActivo.periodo !== 2 || pActivo.estado !== 'descanso' || segsActuales() !== 0) {
-      avisar('aviso-admin', 'El tiempo extra solo puede comenzar al terminar el segundo tiempo.', true);
+    if (pActivo.estado === 'finalizado' || pActivo.estado === 'penales') {
+      avisar('aviso-admin', 'No se puede saltar al tiempo extra desde un estado finalizado o de penales.', true);
       return;
     }
-    if (pActivo.goles_local !== pActivo.goles_visitante) {
-      avisar('aviso-admin', 'El tiempo extra solo se juega si el partido queda empatado.', true);
+    if (pActivo.periodo !== 2) {
+      avisar('aviso-admin', 'El tiempo extra se inicia desde el segundo tiempo.', true);
       return;
     }
-    if (!confirm('¿Iniciar Tiempo Extra de 10 minutos por empate?')) return;
+    if (!confirm('¿Deseas saltar al tiempo extra de 10 minutos? Se fuerza el paso del segundo tiempo.')) return;
 
     if (ticker) clearInterval(ticker);
-    // Inicia el periodo 3 con 600 segundos y guarda todo para poder restaurarlo.
     segsBase = 600;
     tInicio = new Date().toISOString();
+    logReloj('saltar a tiempo extra', { partidoId: pActivo.id, segundos: segsBase, marcador: `${pActivo.goles_local} - ${pActivo.goles_visitante}` });
     await actualizar('partidos', pActivo.id, {
       estado: 'tiempo_extra', periodo: 3, reloj_segundos: 600, reloj_iniciado_en: tInicio
     });
